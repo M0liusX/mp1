@@ -713,6 +713,7 @@ segments:
     subsegments:
       - [0x241740, c]
       - [0x241770, c]
+      #- [0x241880, .rodata]
   - type: bin
     start: 0x241880
   - type: code
@@ -724,6 +725,7 @@ segments:
     exclusive_ram_id: minigame
     subsegments:
       - [0x2418A0, c]
+      - [0x2418D0, c]
   - type: bin
     start: 0x244B50
   - type: code

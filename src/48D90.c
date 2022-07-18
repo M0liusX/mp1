@@ -1,5 +1,43 @@
 #include "common.h"
 
+// extern u16 *D_800C4FD0;
+// extern u32 D_800C4FD4[];
+// extern u32 D_800C4FFC[];
+// extern u32 D_800C5024[];
+// extern f32 *D_800C504C;
+// extern f32 *D_800C5074;
+// extern Vtx D_000C50A0;
+// extern Vtx D_000C50E0;
+// extern Gfx *D_800C5120;
+// extern u8 D_800C51B0[];
+
+// extern u16 D_800D8100; // space_count
+// extern u16 D_800D8102; // unk_count
+// extern u16 D_800D8104; // chain_count
+// extern struct space_data *D_800D8108;
+// extern struct chain_data *D_800D810C;
+// extern struct chain_data *D_800D8110;
+// extern void *D_800D8118[];
+// extern s16 D_800D8140;
+// extern struct event_list_entry *D_800D8144; // event type -2 list
+// extern struct event_list_entry *D_800D8148; // event type -3 list
+// extern struct event_list_entry *D_800D814C; // event type -4 list
+// extern struct event_list_entry *D_800D8150; // event type -5 list
+// extern s32 D_800D8154; // Set by event code to suspend execution
+
+// extern s16 D_800ED52C;
+// extern s16 D_800ED5E0;
+
+// extern u16 D_800F3290;
+// extern Mtx (*D_800F374C)[];
+
+// extern void func_8001D658(s32 a, void *b);
+// extern void func_8001D7DC(s32 a, void *b);
+// extern Mtx *func_800A0A20(void *a, s32 b);
+// extern void func_800A0B90(void *a, s32 b);
+// extern void func_80022390(void *a, f32 x, f32 y, f32 z);
+// extern void func_80022450(void *a, f32 x, f32 y, f32 z);
+
 INCLUDE_ASM(s32, "48D90", func_80048190);
 
 INCLUDE_ASM(s32, "48D90", func_800481F8);

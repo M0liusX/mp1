@@ -1,6 +1,5 @@
 #include "common.h"
-
-void func_800F66AC_24180C(void);
+#include "241740.h"
 
 void func_800F6610_241770(void) {
     if (IsBoardFeatureFlagSet(0) != 0) {
