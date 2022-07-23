@@ -31,7 +31,7 @@ void func_800F67BC_17E8EC(void) {
     D_800F2BC0 = 0;
     D_800EE984 = 0;
     D_800FB6C4 = 4;
-    D_800FB98C = 0;
+    D_800FB98C_EE324 = 0;
     D_800FB988 = 0;
     D_800FB6C8 = IsBoardFeatureFlagSet(MINIGAME_ISLAND_ENDING);
 }

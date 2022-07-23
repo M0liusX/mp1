@@ -62,8 +62,8 @@ void func_800F8DC8_12E408(Object* arg0) {
     func_80023504(2, 0.0f, -117.0f, 22.0f);
     func_800234B8(2, 0xFF, 0, 0);
     func_80025F10(func_8002451C(0, &func_800F9988_12EFC8, 0), 16);
-    D_800FC9F0.x = ((-17.25f - D_800FC500.unk_50) / (D_800FC500.unk_50 - D_800FC500.unk_00));
-    D_800FC9F0.y = ((-17.25f - D_800FC500.unk_50) / (D_800FC500.unk_50 - D_800FC500.unk_28));
+    D_800FC9F0.x = ((-17.25f - D_800FC500_DB100.unk_50) / (D_800FC500_DB100.unk_50 - D_800FC500_DB100.unk_00));
+    D_800FC9F0.y = ((-17.25f - D_800FC500_DB100.unk_50) / (D_800FC500_DB100.unk_50 - D_800FC500_DB100.unk_28));
     arg0->unk_4C = 0;
     func_80072644(0, 16);
     arg0->func_ptr = &func_800F8FCC_12E60C;

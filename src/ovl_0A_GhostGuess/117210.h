@@ -1,8 +1,10 @@
 #include "common.h"
 
+//start of rodata 800FB670_11C2A0
+
 void func_800FB3B0_11BFE0(void);
 extern s32 D_800FBEC0;
-extern s16 D_800FBEC2[];
+extern s16 D_800FBEC2_11CAF2[];
 void func_800F79D4_118604(void);
 void func_800FB21C_11BE4C(void);
 

@@ -8,11 +8,11 @@ s16 func_800F6610_254480(void) {
     s32 i;
 
     for (i = 0; i < 7; i++) {
-        if (curSpaceIndex == D_800F8BD0[i]) {
-            return D_800F8BE0[i];
+        if (curSpaceIndex == D_800F8BD0_256A40[i]) {
+            return D_800F8BE0_256A50[i];
         }
     }
-    return D_800F8BE0[0];
+    return D_800F8BE0_256A50[0];
 }
 
 void func_800F667C_2544EC(void) {
@@ -38,10 +38,10 @@ void func_800F671C_25458C(void) {
     s32 i;
 
     for (i = 0; i < 7; i++) {
-        if (IsBoardFeatureFlagSet(D_800F8BC0[i])) {
-            SetSpaceType(D_800F8BD0[i], 6);
+        if (IsBoardFeatureFlagSet(D_800F8BC0_256A30[i])) {
+            SetSpaceType(D_800F8BD0_256A40[i], 6);
         } else {
-            SetSpaceType(D_800F8BD0[i], 5);
+            SetSpaceType(D_800F8BD0_256A40[i], 5);
         }
     }
 }
@@ -51,13 +51,13 @@ s16 func_800F67AC_25461C(s16 arg0) {
     s32 i;
     
     for (i = 0; i < 7; i++) {
-        if (arg0 != D_800F8BD0[i]) {
+        if (arg0 != D_800F8BD0_256A40[i]) {
             continue;
         } else {
-            if (IsBoardFeatureFlagSet(D_800F8BC0[i]) != 0) {
+            if (IsBoardFeatureFlagSet(D_800F8BC0_256A30[i]) != 0) {
                 return 2;
             } else {
-                gameStatus->unk_1A = D_800F8BC0[i];
+                gameStatus->unk_1A = D_800F8BC0_256A30[i];
                 return 1;
             }
         }
@@ -69,7 +69,7 @@ void func_800F6850_2546C0(void) {
     func_8001D494(1, 40.0f, 80.0f, 8000.0f);
     func_8001D420(1, &D_800F9180, &D_800F918C, &D_800F9198);
     func_8001D57C(1);
-    func_8001D520(1, &D_800F91A4, &D_800F91B0);
+    func_8001D520(1, &D_800F91A4, &D_800F91B0_257020);
 }
 
 void func_800F68B8_254728(void) {
@@ -106,9 +106,9 @@ ProcessHeader* func_800F68E4_254754(s32* arg0) {
         D_800F91A4.x = 1280.0f;
         D_800F91A4.y = 960.0f;
         D_800F91A4.z = 511.0f;
-        D_800F91B0.x = 240.0f;
-        D_800F91B0.y =  temp_s0->unk_0A * 4.0f + 480.0f;
-        D_800F91B0.z = 511.5f;
+        D_800F91B0_257020.x = 240.0f;
+        D_800F91B0_257020.y =  temp_s0->unk_0A * 4.0f + 480.0f;
+        D_800F91B0_257020.z = 511.5f;
         func_800F6850_2546C0();
         temp_s0->unk_08 = func_8007194C(0x4B, temp_s0->unk_0A + 0x5A, 3);
         func_8006E070(temp_s0->unk_08, 0);
@@ -150,7 +150,7 @@ void func_800F6BD8_254A48(void) {
     ProcessHeader* temp_s0;
 
     func_80060128(0x30);
-    temp_s0 = func_800F68E4_254754(D_800F8BF0);
+    temp_s0 = func_800F68E4_254754(D_800F8BF0_256A60);
     func_80072644(2, 0x10);
 
     while (func_80072718() != 0) {

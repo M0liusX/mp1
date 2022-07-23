@@ -1,7 +1,12 @@
 #include "common.h"
+#include "ovl_71.h"
 
-INCLUDE_ASM(s32, "ovl_71_MinigameIslandOverworld/2F6FB0", func_800F65E0_2F6FB0);
+static board_overlay_entrypoint D_800F6690[] = {
+{0, &func_800F6610_2F6FE0},
+{1, &func_800F6668_2F7038},
+{-1, 0},
+};
 
-INCLUDE_ASM(s32, "ovl_71_MinigameIslandOverworld/2F6FB0", func_800F6610_2F6FE0);
-
-INCLUDE_ASM(s32, "ovl_71_MinigameIslandOverworld/2F6FB0", func_800F6668_2F7038);
+void func_800F65E0_2F6FB0(void) {
+    ExecBoardScene(&D_800F6690, D_800C597A);
+}

@@ -27,16 +27,16 @@ extern s32 D_800F8C70[]; //ai decision struct
 extern s32 D_800F8D60[]; //ai decision struct
 extern s16 D_800ED5C2;
 extern s16 D_800ED172;
-extern s32 D_800F8BF0[];
-extern s16 D_800F8BC0[]; //more spaceIDs
-extern s16 D_800F8BD0[]; //spaceIDs
-extern s16 D_800F8BE0[];
+extern s32 D_800F8BF0_256A60[];
+extern s16 D_800F8BC0_256A30[]; //more spaceIDs
+extern s16 D_800F8BD0_256A40[]; //spaceIDs
+extern s16 D_800F8BE0_256A50[];
 extern s16 D_800ED5CA;
 extern Vec3f D_800F9180;
 extern Vec3f D_800F918C;
 extern Vec3f D_800F9198;
 extern Vec3f D_800F91A4;
-extern Vec3f D_800F91B0;
+extern Vec3f D_800F91B0_257020;
 extern f32 D_800F91B4;
 extern event_table_entry D_800F905C;
 extern event_table_entry D_800F9164;

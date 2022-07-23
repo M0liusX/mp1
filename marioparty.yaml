@@ -1032,7 +1032,7 @@ segments:
     dir: ovl_52_FlyGuyWarioBoard
     name: FlyGuyWarioBoard
     overlay: True
-    exclusive_ram_id: minigame
+    exclusive_ram_id: board
     subsegments:
       - [0x28ECA0, c]
   - type: bin
@@ -1091,7 +1091,7 @@ segments:
     subsegments:
       - [0x293A70, c]
   - type: bin
-    start: 0x295350
+    start: 0x295350 #is actually start of rodata for ovl_57
   # - type: code #overlay is blank
   #   start: 0x295450
   #   vram: 0x800F65E0
@@ -1275,8 +1275,7 @@ segments:
     subsegments:
       - [0x2BB390, c]
       - [0x2BB3C0, c]
-  - type: bin
-    start: 0x2BB5B0
+      - [0x2BB5B0, .rodata, 2BB390]
   - type: code
     start: 0x2BB5C0
     vram: 0x800F65E0
@@ -1375,8 +1374,8 @@ segments:
     exclusive_ram_id: minigame
     subsegments:
       - [0x2F6FB0, c]
-  - type: bin
-    start: 0x2F7060
+      - [0x2F6FE0, c]
+      - [0x2F7060, .rodata, 2F6FB0]
   - type: code
     start: 0x2F7080
     vram: 0x800F65E0

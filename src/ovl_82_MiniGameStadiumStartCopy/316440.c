@@ -10,13 +10,13 @@ void func_800F65E0_316440(void) {
     func_8005D384(0x1000, 0, 0, -1, &func_800F7794_3175F4);
 }
 
-void func_800F6650_3164B0(s32 arg0, s32 arg1) {
-    playerMain* temp_s0;
+void func_800F6650_3164B0(s32 player1Index, s32 player2Index) { //swap player structs
+    void* temp_s0;
     playerMain* temp_s1;
-    void* temp_s2;
+    playerMain* temp_s2;
 
-    temp_s1 = GetPlayerStruct(arg0);
-    temp_s2 = GetPlayerStruct(arg1);
+    temp_s1 = GetPlayerStruct(player1Index);
+    temp_s2 = GetPlayerStruct(player2Index);
     temp_s0 = MallocPerm(sizeof(playerMain));
     bcopy(temp_s1, temp_s0, sizeof(playerMain));
     bcopy(temp_s2, temp_s1, sizeof(playerMain));

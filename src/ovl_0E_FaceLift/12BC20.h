@@ -29,7 +29,7 @@ extern u16 D_800FC3D0_DAFD0;
 extern u16 D_800F5144;
 extern u16 D_800FC960;
 extern unk_FaceLift_01 D_800FC4B0[];
-extern unk_FaceLift_00 D_800FC500;
+extern unk_FaceLift_00 D_800FC500_DB100;
 extern Vec3f D_800FC980[];
 extern Vec2f D_800FC9F0;
 extern s16 D_800FCA1E;

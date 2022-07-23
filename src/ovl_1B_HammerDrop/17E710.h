@@ -30,7 +30,7 @@ extern s16 D_800EE984;
 extern s32 D_800FB6C4;
 extern s32 D_800FB6C8;
 extern s32 D_800FB988;
-extern s32 D_800FB98C;
+extern s32 D_800FB98C_EE324;
 extern u16 D_800F5144;
 extern f32 D_800FB6CC;
 extern Object* D_800F2AF8[];

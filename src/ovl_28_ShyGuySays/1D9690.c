@@ -22,14 +22,14 @@ void func_800F65E0_1D9690(void) {
     D_800F2BC0 = 0;
     D_800ED440 = 0;
     D_800EE984 = 0;
-    D_800FD9A4 = 0;
-    D_800FD9A6 = 0;
+    D_800FD9A4_1C9274 = 0;
+    D_800FD9A6_1C9276 = 0;
     D_800FD9A8 = 0;
-    D_800FD99C = 0;
+    D_800FD99C_1C926C = 0;
     D_800FD9A0 = 0;
-    D_800FDC1A = 0;
-    D_800FDC1C = 0;
-    D_800FDC1E = 0;
+    D_800FDC1A_1C94EA = 0;
+    D_800FDC1C_1C94EC = 0;
+    D_800FDC1E_1C94EE = 0;
     D_800FDD10 = 1;
     D_800FDC20 = NULL;
     D_800FD998 = func_8005D384(0x20, 0, 0, -1, &func_800F67F8_1D98A8);
@@ -53,7 +53,7 @@ void func_800F67F8_1D98A8(Object* arg0) {
     D_800FD9A0 = 1;
     func_80060128(0x19);
     if (IsBoardFeatureFlagSet(MINIGAME_ISLAND_ENDING) != 0) {
-        D_800FDC1C = 1;
+        D_800FDC1C_1C94EC = 1;
     }
 }
 
@@ -101,9 +101,9 @@ void func_800F6E50_1D9F00(Object* arg0) {
     switch (D_800FD5CE) {
     case 0:
         func_80075CCC(2);
-        temp_v1_2 = &D_800FD9C0[D_800FDC1E];
+        temp_v1_2 = &D_800FD9C0[D_800FDC1E_1C94EE];
         if ((temp_v1_2->unk_00 != 0) && (temp_v1_2->unk_04 != 0x200)) {
-            gPlayers[D_800FDC1E].miniGameCoins += 10;
+            gPlayers[D_800FDC1E_1C94EE].miniGameCoins += 10;
         }
         D_800FD5CE++;
         return;
@@ -152,17 +152,17 @@ void func_800F702C_1DA0DC(Object* arg0, f32 arg1) {
         D_800FD980.x = arg0->unk_18;
         D_800FD980.y = 100.0f;
         D_800FD980.z = arg0->unk_20;
-        D_800FD98C.x = D_800F6524.x;
-        D_800FD98C.y = D_800F6524.y;
-        D_800FD98C.z = D_800F6524.z;
+        D_800FD98C_1C925C.x = D_800F6524.x;
+        D_800FD98C_1C925C.y = D_800F6524.y;
+        D_800FD98C_1C925C.z = D_800F6524.z;
         return;
     }
 
-    D_800F6524.x = D_800FD98C.x + (arg1 * (D_800FD980.x - D_800FD98C.x));
-    D_800F6524.y = D_800FD98C.y + (arg1 * (D_800FD980.y - D_800FD98C.y));
-    D_800F6524.z = D_800FD98C.z + (arg1 * (D_800FD980.z - D_800FD98C.z));
+    D_800F6524.x = D_800FD98C_1C925C.x + (arg1 * (D_800FD980.x - D_800FD98C_1C925C.x));
+    D_800F6524.y = D_800FD98C_1C925C.y + (arg1 * (D_800FD980.y - D_800FD98C_1C925C.y));
+    D_800F6524.z = D_800FD98C_1C925C.z + (arg1 * (D_800FD980.z - D_800FD98C_1C925C.z));
     D_800EE98C = (D_800FD638 - (arg1 * D_800FD630));
-    func_80066DC4(temp_s0, 0, (D_800FDC64->unk_00[2] * 320.0f), (D_800FD650 - (arg1 * D_800FD648) + 2.0 * func_800AEAC0(arg1 * D_800FD640)));
+    func_80066DC4(temp_s0, 0, (D_800FDC64_1C9534->unk_00[2] * 320.0f), (D_800FD650 - (arg1 * D_800FD648) + 2.0 * func_800AEAC0(arg1 * D_800FD640)));
 }
 
 void func_800F71F4_1DA2A4(void) {
@@ -202,16 +202,16 @@ void func_800F72A4_1DA354(void) {
 void func_800F736C_1DA41C(void) {
     u16 i;
 
-    D_800FDC64 = MallocPerm(sizeof(unkStruct_ShyGuySays_04));
-    D_800FDC64->unk_00[0] = 1.0f;
+    D_800FDC64_1C9534 = MallocPerm(sizeof(unkStruct_ShyGuySays_04));
+    D_800FDC64_1C9534->unk_00[0] = 1.0f;
     
     for (i = 1; i < 100; i++) {
-        D_800FDC64->unk_00[i] = func_800FD658_1C8F28 / (f32) i;
+        D_800FDC64_1C9534->unk_00[i] = func_800FD658_1C8F28 / (f32) i;
     }
 }
 
 void func_800F73EC_1DA49C(void) {
-    FreePerm(D_800FDC64);
+    FreePerm(D_800FDC64_1C9534);
 }
 
 u16 func_800F740C_1DA4BC(u16 arg0) { //shared overlay function
@@ -391,16 +391,16 @@ INCLUDE_ASM(s32, "ovl_28_ShyGuySays/1D9690", func_800F9AFC_1DCBAC);
 
 void func_800F9C50_1DCD00(u16 arg0[]) {
     u16 i;
-    D_800FD9A6--;
+    D_800FD9A6_1C9276--;
     
-    if (D_800FD9A6 > 0) {
+    if (D_800FD9A6_1C9276 > 0) {
         for (i = 0; i < 4; i++) {
-            D_800FD9CE[i].unk_00 -= D_800FD9A6;
+            D_800FD9CE_1C929E[i].unk_00 -= D_800FD9A6_1C9276;
         }
     }
 
     for (i = 0; i < 4; i++) {
-        arg0[i] = D_800FD9CE[i].unk_00;
+        arg0[i] = D_800FD9CE_1C929E[i].unk_00;
     }
 
 }
@@ -410,7 +410,7 @@ void func_800F9D14_1DCDC4(s16 arg0) {
 
     for (i = 0; i < 4; i++) {
         if ((D_800FD9C0[i].unk_00 != 0) && (D_800FD9C0[i].unk_04 != 0x200)) {
-            D_800FD9CE[i].unk_00 = arg0;
+            D_800FD9CE_1C929E[i].unk_00 = arg0;
         }
     }
 }

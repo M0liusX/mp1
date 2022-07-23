@@ -1,11 +1,41 @@
 #include "common.h"
 #include "29AB30.h"
 
-static s32 D_800F6E7C[];
-static s32 D_800F6D30[];
-static Vec3f D_800F6D50[];
-static Vec3f D_800F6DB0[];
-static s32* ptr_800F6E64[];
+static s32 D_800F6D30_29B280[] = {0x00000002, 0x00000009, 0x00000014, 0x0000001D, 0x00000029, 0x00000031, 0x0000003A, 0x00000047};
+
+static Vec3f D_800F6D50_29B2A0[] = {
+    {-80.0f, 0.0f, 1310.0f},
+    {-80.0f, 0.0f, 1310.0f},
+    {-80.0f, 0.0f, 1310.0f},
+    {-80.0f, 0.0f, 1310.0f},
+    {-80.0f, 0.0f, 1310.0f},
+    {-80.0f, 0.0f, 1310.0f},
+    {-80.0f, 0.0f, 1310.0f},
+    {-80.0f, 0.0f, 1310.0f}
+};
+
+static Vec3f D_800F6DB0_29B300[] = {
+    {80.0f, 0.0f, 1520.0f},
+    {80.0f, 0.0f, 1520.0f},
+    {80.0f, 0.0f, 1520.0f},
+    {80.0f, 0.0f, 1520.0f},
+    {80.0f, 0.0f, 1520.0f},
+    {80.0f, 0.0f, 1520.0f},
+    {80.0f, 0.0f, 1520.0f},
+    {80.0f, 0.0f, 1520.0f},
+    {-500.f, 0.0f, 1310.0f}
+};
+
+static s32 D_800F6E1C_29B36C[] = { 0x00000002, 0x00010039, 0x00010001 };
+static s32 D_800F6E28_29B378[] = { 0x00000002, 0x00020039, 0x00020001 };
+static s32 D_800F6E34_29B384[] = { 0x00000002, 0x00060039, 0x00060001 };
+static s32 D_800F6E40_29B390[] = { 0x00000002, 0x00030039, 0x00030001 };
+static s32 D_800F6E4C_29B39C[] = { 0x00000002, 0x00040039, 0x00040001 };
+static s32 D_800F6E58_29B3A8[] = { 0x00000002, 0x00050039, 0x00050001 };
+
+static s32* ptr_800F6E64[] = { D_800F6E1C_29B36C, D_800F6E28_29B378, D_800F6E34_29B384, D_800F6E40_29B390, D_800F6E4C_29B39C, D_800F6E58_29B3A8 };
+
+static s32 D_800F6E7C_29B3CC[] = { 0x00000003, 0x000A0072, 0x000A0073, 0x000A0074, 0x00000000 };
 
 void func_8004DBD4(s32, u8);
 
@@ -60,10 +90,10 @@ void func_800F66C4_29AC14(void) {
     func_8004DBD4(textWindowID, D_800F6EC1);
     HideTextWindow(textWindowID);
     func_8004F4D4(D_800F6EC4, 2, 2);
-    func_8004EE14(0, &D_800F6E10, 10, D_800F6EC4);
+    func_8004EE14(0, &D_800F6E10_29B360, 10, D_800F6EC4);
     PlaySound(85);
     SleepProcess(10);
-    func_8004E3E0(0, &D_800F6E10, 20, D_800F6EC4);
+    func_8004E3E0(0, &D_800F6E10_29B360, 20, D_800F6EC4);
     PlaySound(85);
     SleepProcess(20);
     D_800F5144 = 1;
@@ -91,16 +121,16 @@ void func_800F6978_29AEC8(Object* arg0) {
 
 void func_800F69BC_29AF0C(void) {
     func_8003DAA8();
-    D_800F6EC4 = func_8003DBE0(8, &D_800F6E7C);
-    D_800F6EC4->coords.x = D_800F6D50[D_800F6EC0].x;
-    D_800F6EC4->coords.y = D_800F6D50[D_800F6EC0].y;
-    D_800F6EC4->coords.z = D_800F6D50[D_800F6EC0].z;
+    D_800F6EC4 = func_8003DBE0(8, &D_800F6E7C_29B3CC);
+    D_800F6EC4->coords.x = D_800F6D50_29B2A0[D_800F6EC0].x;
+    D_800F6EC4->coords.y = D_800F6D50_29B2A0[D_800F6EC0].y;
+    D_800F6EC4->coords.z = D_800F6D50_29B2A0[D_800F6EC0].z;
     D_800F6EC4->unk_30 = 1000.0f;
     func_8004F140(*D_800F6EC4->unk_3C->unk_40);
     D_800F6EC8 = func_8003DBE0(func_80052F04(D_800F6EC1), ptr_800F6E64[gPlayers[D_800F6EC1].characterID]);
-    D_800F6EC8->coords.x = D_800F6DB0[D_800F6EC0].x;
-    D_800F6EC8->coords.y = D_800F6DB0[D_800F6EC0].y;
-    D_800F6EC8->coords.z = D_800F6DB0[D_800F6EC0].z;
+    D_800F6EC8->coords.x = D_800F6DB0_29B300[D_800F6EC0].x;
+    D_800F6EC8->coords.y = D_800F6DB0_29B300[D_800F6EC0].y;
+    D_800F6EC8->coords.z = D_800F6DB0_29B300[D_800F6EC0].z;
     func_80021B14(*D_800F6EC8->unk_3C->unk_40, gPlayers[D_800F6EC1].characterID, 0x80);
     func_8004CCD0(&D_800F6EC4->coords, &D_800F6EC8->coords, &D_800F6EC4->unk_18);
     func_8004CCD0(&D_800F6EC8->coords, &D_800F6EC4->coords, &D_800F6EC8->unk_18);
@@ -148,7 +178,7 @@ void func_800F6B8C_29B0DC(void) {
         }
         break;
     default:
-        var_a0 = D_800F6D30[D_800F6EC0];
+        var_a0 = D_800F6D30_29B280[D_800F6EC0];
     }
     func_80049F4C(var_a0);
 }
@@ -157,39 +187,3 @@ void func_800F6D04_29B254(void) {
     func_8004A140();
     func_80049F0C();
 }
-
-static s32 D_800F6D30[] = {0x00000002, 0x00000009, 0x00000014, 0x0000001D, 0x00000029, 0x00000031, 0x0000003A, 0x00000047};
-
-static Vec3f D_800F6D50[] = {
-    {-80.0f, 0.0f, 1310.0f},
-    {-80.0f, 0.0f, 1310.0f},
-    {-80.0f, 0.0f, 1310.0f},
-    {-80.0f, 0.0f, 1310.0f},
-    {-80.0f, 0.0f, 1310.0f},
-    {-80.0f, 0.0f, 1310.0f},
-    {-80.0f, 0.0f, 1310.0f},
-    {-80.0f, 0.0f, 1310.0f}
-};
-
-static Vec3f D_800F6DB0[] = {
-    {80.0f, 0.0f, 1520.0f},
-    {80.0f, 0.0f, 1520.0f},
-    {80.0f, 0.0f, 1520.0f},
-    {80.0f, 0.0f, 1520.0f},
-    {80.0f, 0.0f, 1520.0f},
-    {80.0f, 0.0f, 1520.0f},
-    {80.0f, 0.0f, 1520.0f},
-    {80.0f, 0.0f, 1520.0f},
-    {-500.f, 0.0f, 1310.0f}
-};
-
-static s32 D_800F6E1C[] = { 0x00000002, 0x00010039, 0x00010001 };
-static s32 D_800F6E28[] = { 0x00000002, 0x00020039, 0x00020001 };
-static s32 D_800F6E34[] = { 0x00000002, 0x00060039, 0x00060001 };
-static s32 D_800F6E40[] = { 0x00000002, 0x00030039, 0x00030001 };
-static s32 D_800F6E4C[] = { 0x00000002, 0x00040039, 0x00040001 };
-static s32 D_800F6E58[] = { 0x00000002, 0x00050039, 0x00050001 };
-
-static s32* ptr_800F6E64[] = { D_800F6E1C, D_800F6E28, D_800F6E34, D_800F6E40, D_800F6E4C, D_800F6E58 };
-
-static s32 D_800F6E7C[] = { 0x00000003, 0x000A0072, 0x000A0073, 0x000A0074, 0x00000000 };

@@ -12,10 +12,10 @@ void func_800F69DC_11760C(Object* arg0) {
     temp_s1 = func_800678A4(temp_s0);
     FreeMainFS(temp_s0);
     D_800FBEC0 = func_80064EF4(1, 0);
-    func_80067208(D_800FBEC2[0], 0, temp_s1, 0);
-    func_800674BC(D_800FBEC2[0], 0, 0x9000);
-    func_80067354(D_800FBEC2[0], 0, 1.0f, 1.0f);
-    func_80066DC4(D_800FBEC2[0], 0, 160, 120);
+    func_80067208(D_800FBEC2_11CAF2[0], 0, temp_s1, 0);
+    func_800674BC(D_800FBEC2_11CAF2[0], 0, 0x9000);
+    func_80067354(D_800FBEC2_11CAF2[0], 0, 1.0f, 1.0f);
+    func_80066DC4(D_800FBEC2_11CAF2[0], 0, 160, 120);
     func_800FB3B0_11BFE0();
 }
 

@@ -93,12 +93,12 @@ void func_800F6D2C_121F1C(Object* arg0) {
     arg0->unk_50 = func_80023684(0x6C, 0x7918);
     func_8009B770(arg0->unk_50, 0, 0x6C);
     temp_s1 = arg0->unk_50;
-    D_800FA73C.x = 400.0f;
-    D_800FA73C.y = 250.0f;
-    D_800FA73C.z = 600.0f;
+    D_800FA73C_12592C.x = 400.0f;
+    D_800FA73C_12592C.y = 250.0f;
+    D_800FA73C_12592C.z = 600.0f;
     arg0->unk_18 = 400.0f;
-    arg0->unk_1C = D_800FA73C.y;
-    arg0->unk_20 = D_800FA73C.z;
+    arg0->unk_1C = D_800FA73C_12592C.y;
+    arg0->unk_20 = D_800FA73C_12592C.z;
     arg0->unk_38 = 1.2f;
     arg0->unk_34 = 1.2f;
     arg0->unk_30 = 1.2f;
@@ -156,7 +156,7 @@ void func_800F7C04_122DF4(Object* arg0) {
     func_80025EB4(D_800F9EF8, 2, 1);
     func_80025EB4(D_800F9EF6, 2, 1);
     func_80026040(D_800F9EFA);
-    func_80039C48(&D_800F9E90, &D_800F9EFE);
+    func_80039C48(&D_800F9E90_125080, &D_800F9EFE);
     D_800F9F04 = 0;
     arg0->unk_18 = arg0->unk_1C = arg0->unk_20 = 0.0f;
     arg0->unk_24 = 0.0f;

@@ -91,7 +91,7 @@ void func_800F7340_28B900(void) {
         func_800F7524_28BAE4();
         func_80054654();
         func_80070ED4();
-        if (D_800F7620 == 0) {
+        if (D_800F7620_28BBE0 == 0) {
             func_8005DFB8(1);
             return;
         }
@@ -102,7 +102,7 @@ void func_800F7340_28B900(void) {
 
 void func_800F73BC_28B97C(Object* arg0) {
     if (D_800F5144 != 0) {
-        if (D_800F7620 != 0) {
+        if (D_800F7620_28BBE0 != 0) {
             func_800726AC(6, 8);
         } else {
             func_800726AC(1, 16);
@@ -118,7 +118,7 @@ void func_800F741C_28B9DC(void) {
     D_800F76B4->coords.y = D_800F7624.y;
     D_800F76B4->coords.z = D_800F7624.z;
     func_800A0D00(&D_800F76B4->unk_24, 2.0f, 2.0f, 2.0f);
-    D_800F76B8 = func_8003DBE0(func_80052F04(D_800F76B0), D_800F7678[gPlayers[D_800F76B0].characterID]);
+    D_800F76B8 = func_8003DBE0(func_80052F04(D_800F76B0), D_800F7678_28BC38[gPlayers[D_800F76B0].characterID]);
     D_800F76B8->coords.x = D_800F7630.x;
     D_800F76B8->coords.y = D_800F7630.y;
     D_800F76B8->coords.z = D_800F7630.z;
