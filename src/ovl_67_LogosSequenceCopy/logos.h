@@ -36,7 +36,7 @@ void func_800639F8(void*, void*, s32);
 void func_80063A5C(void*);
 void func_8007FEA4(void);
 void func_80088620(void*, void*, s32);
-void func_80088720(s32);
+void osDestroyThread(s32);
 extern s32 D_800F7980;
 extern s32 D_800F7998;
 

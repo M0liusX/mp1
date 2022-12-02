@@ -59,7 +59,6 @@ Realloc = 0x800599DC;
 GetAllocatedHeapSize = 0x80059AA4;
 GetUsedMemoryBlockCount = 0x80059AD8;
 osInitialize = 0x80093240;
-osCreateThread = 0x80088650;
 ultraMain = 0x80000460;
 thread1_idle = 0x800004B8;
 gThread1Stack = 0x800CCE50;
@@ -106,11 +105,10 @@ FreeProcessMemory = 0x8006379C;
 LoadStringIntoWindow = 0x8006D7D8;
 PlaySound = 0x800602AC;
 InitCameras = 0x8001D240;
-OSRecvMsg = 0x800889E0;
-osSendMsg = 0x80088B10;
+
 fadeStatus = 0x800ED564;
 LeoDriveExist = 0x80081CC0;
-osGetMemSize = 0x800931A0;
+
 LeoDriveExistBool = 0x800C1900;
 guLookAtF = 0x8009C2A0;
 Convert3DTo2D = 0x8001D934;
@@ -123,3 +121,42 @@ CreateObject = 0x8003DBE0;
 DestroyObject = 0x8003E694;
 _Printf = 0x80095470;
 sprintf = 0x8008C490;
+
+
+osCreateThread = 0x80088650;
+osDestroyThread = 0x80088720;
+osGetThreadPri = 0x800887F0;
+osGetCount = 0x80093780;
+osGetTime = 0x80088810;
+osJamMsg = 0x800888A0;
+OSRecvMsg = 0x800889E0;
+osSendMsg = 0x80088B10;
+osGetMemSize = 0x800931A0;
+
+
+__osDisableInt = 0x80093520;
+__osRestoreInt = 0x80093590;
+__osEnqueueAndYield = 0x80092EAC;
+__osPopThread = 0x80092FFC;
+__osDequeueThread = 0x80088EF0;
+
+__osRunningThread = 0x800C64B0;
+__osBaseCounter = 0x800ECB18;
+__osCurrentTime = 0x800F0A30;
+__osActiveQueue = 0x800C64AC;
+
+
+__osEnqueueAndYield = 0x80092EAC;
+__osPopThread = 0x80092FFC;
+__osDispatchThread = 0x8009300C;
+
+
+__osThreadSave = 0x800ECC30;
+__OSGlobalIntMask = 0x800C7730;
+__osShutdown = 0x800C772C;
+__osRunQueue = 0x800C64A8;
+__osFaultedThread = 0x800C64B4;
+__osEventStateTab = 0x800F5280;
+__osRcpImTable = 0x800CC430;
+__osIntOffTable = 0x800CC660;
+__osHwIntTable = 0x800C76F0;

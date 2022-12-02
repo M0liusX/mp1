@@ -59,7 +59,7 @@ void func_800F6BA0_2BAFA0(void) {
         func_8007FEA4();
     }
     func_80063A5C(&sp10);
-    func_80088720(0);
+    osDestroyThread(0);
 }
 
 INCLUDE_ASM(s32, "ovl_67_LogosSequenceCopy/2BAA10", func_800F6C1C_2BB01C); //https://decomp.me/scratch/rZb4x

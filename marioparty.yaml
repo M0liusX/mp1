@@ -115,8 +115,18 @@ segments:
       - [0x83490, bin]
       #- [0x83490, c] #has some code, weird to split?
       - [0x83960, c]
+      #- [0x89250, c, ../lib/ultralib/src/os/createthread]
+      #- [0x89320, c, ../lib/ultralib/src/os/destroythread]
+      # - [0x894A0, c, ../lib/ultralib/src/os/getthreadpri]
+      # - [0x894A0, c, ../lib/ultralib/src/os/gettime]
+      # - [0x894A0, c, ../lib/ultralib/src/os/jammesg]
+      # - [0x895E0, c, ../lib/ultralib/src/os/recvmesg]
+      # - [0x89710, c, ../lib/ultralib/src/os/sendmesg]
+      # - [0x89840, c]
       - [0x89E90, c] #
       - [0x89EA0, c] # -O0?
+      # - [0x93430, hasm, ../lib/ultralib/src/os/exceptasm]
+      # - [0x93DA0, c]
       - [0xA2080, c] # -O0?
       - [0xA21C0, c] # -O0?
       - [0xA29F0, c] # -O0?
@@ -200,11 +210,12 @@ segments:
   - type: bin
     start: 0xC3DE0
   # - type: code
-  #   start: 0xC8F30
-  #   vram: 0x800C8330
+  #   start: 0xC72F0
+  #   vram: 0x800C76F0
   #   subsegments:
-  #     - [0xC8F30, data, 180C0]
-
+  #       - [0xC72F0, .data, ../lib/ultralib/src/os/exceptasm]
+  # - type: bin
+  #   start: 0xC7320
   # - type: code
   #   start: 0xCBC60
   #   vram: 0x800CB060
