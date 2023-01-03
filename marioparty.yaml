@@ -1799,11 +1799,13 @@ segments:
     start: 0xFE2310
   - type: bin
     start: 0xFE24BC
+  - {type: bin, start: 0x1539e40, name: "../assets/midi/soundbank1.bnk"}
+  - {type: bin, start: 0x1563b68, name: "../assets/midi/wavetable1.tbl"}
   - type: bin
-    start: 0x1563b68
-  - type: bin
-    start: 0x1563d18
-  - {type: bin, start: 0x1751958, name: "../assets/midi/rainbow"}
+    start: 0x17473b0 # sbk file containing seq files below
+  - {type: bin, start: 0x1751958, name: "../assets/midi/rainbow.seq"}
   - type: bin
     start: 0x1753118
+  - {type: bin, start: 0x1778c70, name: "../assets/midi/soundbank2.bnk"}
+  - {type: bin, start: 0x1782660, name: "../assets/midi/wavetable2.tbl"}
   - [0x2000000]
