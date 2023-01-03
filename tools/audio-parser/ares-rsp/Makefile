@@ -8,7 +8,7 @@ CXXFLAGS := -MMD
 
 -include $(OBJ_FILES:.o=.d)
 
-ares-rsp.exe: $(OBJ_FILES)
+GeMidiToMidi.exe: $(OBJ_FILES)
 	g++ -o $@ $^
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp

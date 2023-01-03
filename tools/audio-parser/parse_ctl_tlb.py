@@ -1,3 +1,5 @@
+import math
+
 # Function to sort the list by first item of tuple
 def sort_tuple(tup):
     tup.sort(key = lambda x: x[0])
@@ -11,16 +13,106 @@ def get_short(addr):
 def get_long(addr):
     return (rom[addr] << 24) + (rom[addr + 1] << 16) + (rom[addr + 2] << 8) + rom[addr + 3]
 
-def find_ctl():
+
+def get_wave_ranges(ctl):
+    banks = []
+    instruments = set()
+    waves = set()
+    waveRanges = []
+
+    for i in range(1, get_short(ctl + 2) + 1):
+        banks.append(get_long(ctl + i * 4) + ctl)
+    # Search for percussion
+    # for bank in banks:
+    #     print(get_long(bank + 8))
+
+    for bank in banks:
+        for i in range(0, get_short(bank)):
+            instruments.add(get_long(bank + 0xC + i * 4) + ctl)
+
+    for inst in instruments:
+        for i in range(0, get_short(inst + 0xE)):
+            sound = get_long(inst + 0x10 + i * 4) + ctl
+            waves.add(get_long(sound + 0x8) + ctl)
+
+    for wave in waves:
+        base = get_long(wave)
+        len = get_long(wave + 0x4)
+        waveRanges.append((base, base + len, wave))
+    waveRanges = sort_tuple(waveRanges)
+    return waveRanges
+
+
+def find_ctl(showPotential=False):
+    potential = []
+    likely = []
+
     for i in range(0, len(rom), 16):
         value = get_long(i);
         if value >= 0x42310000 and value <= 0x423100FF:
-            print("potential ctl: " + hex(i))
+            potential.append(i)
+            if showPotential:
+                print("potential ctl: " + hex(i))
+
+    for clt in potential:
+        if clt + 2 >= len(rom): continue
+        count = get_short(clt + 2)
+        if count == 0: continue
+        if (count * 4 + clt) >= len(rom): continue
+
+        prev = 0
+        found = True
+        for i in range(1, count + 1):
+            offset = get_long(i * 4 + clt)
+            # print(offset)
+            if offset <= prev:
+                found = False
+                break
+            if (offset + clt >= len(rom)):
+                found = False
+                break
+            prev = offset
+        if found: likely.append(clt)
+
+    for ctl in likely:
+        print("Very likely ctl: " + hex(ctl))
+    return likely
+
+
+def find_tbl(ctl):
+    waveRanges = get_wave_ranges(ctl)
+    size = waveRanges[-1][1]
+    
+    # (count, offset)
+    padpattern = []
+    for wave in waveRanges:
+        pad = math.ceil(wave[1]/8) * 8 - wave[1]
+        if pad != 0: 
+            padpattern.append((pad, wave[1]))
+
+    if len(padpattern) < 5:
+        print("unlikely to find")
+        return
+    
+    potentialRange = math.floor(len(rom)/8) * 8 - size
+    for base in range(0, potentialRange, 8):
+        found = True
+        for p in padpattern:
+            for i in range(p[0]):
+                if rom[base + p[1] + i] != 0:
+                    found = False
+                    break
+            if not found: break
+        if found:
+            print("Found tbl: " + hex(base))
+            return base
+        
+
 def get_ctl_range(addr):
     finalBankOffset = get_short(addr + 2) * 4 + addr
     finalBankAddress = get_long(finalBankOffset) + addr
-    print(hex(finalBankAddress))
-    finalByte = get_short(finalBankAddress) * 4 + 0x10 + finalBankAddress
+    finalByte = get_short(finalBankAddress) * 4 + 0xC + finalBankAddress
+    finalByte = math.ceil(finalByte/8) * 8
     print("ctl range: " + hex(addr) + " - " + hex(finalByte))
 
 
@@ -55,40 +147,17 @@ def get_predictor_book(ctl, addr):
                         table[i][k][j + order] = table[i][k - j][order]
             return (order, predictors, table)
 
-def get_tbl_range(ctl, tbl):
-    banks = []
-    instruments = set()
-    waves = set()
-    waveRanges = []
 
-    for i in range(1, get_short(ctl + 2) + 1):
-        banks.append(get_long(ctl + i * 4) + ctl)
-    # Search for percussion
-    # for bank in banks:
-    #     print(get_long(bank + 8))
-
-    for bank in banks:
-        for i in range(0, get_short(bank)):
-            instruments.add(get_long(bank + 0xC + i * 4) + ctl)
-
-    for inst in instruments:
-        for i in range(0, get_short(inst + 0xE)):
-            sound = get_long(inst + 0x10 + i * 4) + ctl
-            waves.add(get_long(sound + 0x8) + ctl)
-
-    for wave in waves:
-        base = get_long(wave)
-        len = get_long(wave + 0x4)
-        waveRanges.append((base, base + len, wave))
-    waveRanges = sort_tuple(waveRanges)
-
-    prev = 0
-    for r in waveRanges:
-        valid = r[0] >= prev
-        print(hex(r[0] + tbl) + "-" + hex(r[1] + tbl) + " :" + "(range: + "+ hex(r[1] - r[0]) + "), " + "(wave: " + hex(r[2]) + ") " + ":" + str(valid))
-        prev = r[0]
+def get_tbl_range(ctl, tbl, showRanges=False):
+    waveRanges = get_wave_ranges(ctl)
+    if showRanges: 
+        prev = 0
+        for r in waveRanges:
+            valid = r[0] >= prev
+            print(hex(r[0] + tbl) + "-" + hex(r[1] + tbl) + " :" + "(range: + "+ hex(r[1] - r[0]) + "), " + "(wave: " + hex(r[2]) + ") " + ":" + str(valid))
+            prev = r[0]
     print("tlb:  " + hex(tbl) + " - " + hex(waveRanges[-1][1] + tbl))
-    return waveRanges
+
 
 def inner_product(len, v1, v2):
     total = 0
@@ -98,6 +167,7 @@ def inner_product(len, v1, v2):
     fiout = dout * (1 << 11)
     if total - fiout < 0: return dout - 1
     else: return dout
+
 
 def vadpcm_dec(start, len, book):
     pos = 0
@@ -137,14 +207,17 @@ def vadpcm_dec(start, len, book):
                 aiff.write((value & 0xffff).to_bytes(2, 'little'))
             pos += 8
 
-rom = read_rom("../../")
-ctl = 0x1539e40
-tbl = 0x1563B68
-# find_ctl()
-# get_ctl_range(0x1539e40)
 
-waves = get_tbl_range(ctl, 0x1563B68)
-for wave in waves:
-    len = wave[1] - wave[0]
-    book = get_predictor_book(ctl, wave[2])
-    vadpcm_dec(tbl + wave[0], len, book)
+rom = read_rom("./")
+ctls = find_ctl()
+tbls = [find_tbl(ctl) for ctl in ctls]
+for i in range(len(ctls)):
+    get_ctl_range(ctls[i])
+    get_tbl_range(ctls[i], tbls[i])
+
+# Decode wave ranges
+# waves = get_wave_ranges(ctl)
+# for wave in waves:
+#     len = wave[1] - wave[0]
+#     book = get_predictor_book(ctl, wave[2])
+#     vadpcm_dec(tbl + wave[0], len, book)
