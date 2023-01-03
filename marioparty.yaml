@@ -1799,4 +1799,11 @@ segments:
     start: 0xFE2310
   - type: bin
     start: 0xFE24BC
+  - type: bin
+    start: 0x1563b68
+  - type: bin
+    start: 0x1563d18
+  - {type: bin, start: 0x1751958, name: "../assets/midi/rainbow"}
+  - type: bin
+    start: 0x1753118
   - [0x2000000]
