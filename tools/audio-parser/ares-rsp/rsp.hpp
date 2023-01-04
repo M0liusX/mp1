@@ -1,32 +1,32 @@
 //Reality Signal Processor
 
 struct RSP : Thread, Memory::IO<RSP> {
-  Node::Object node;
+  // Node::Object node;
   Memory::Writable dmem;
   Memory::Writable imem;
 
-  struct Debugger {
-    //debugger.cpp
-    auto load(Node::Object) -> void;
-    auto unload() -> void;
+//   struct Debugger {
+//     //debugger.cpp
+//     auto load(Node::Object) -> void;
+//     auto unload() -> void;
 
-    auto instruction() -> void;
-    auto ioSCC(bool mode, u32 address, u32 data) -> void;
-    auto ioStatus(bool mode, u32 address, u32 data) -> void;
+//     auto instruction() -> void;
+//     auto ioSCC(bool mode, u32 address, u32 data) -> void;
+//     auto ioStatus(bool mode, u32 address, u32 data) -> void;
 
-    struct Memory {
-      Node::Debugger::Memory dmem;
-      Node::Debugger::Memory imem;
-    } memory;
+//     struct Memory {
+//       Node::Debugger::Memory dmem;
+//       Node::Debugger::Memory imem;
+//     } memory;
 
-    struct Tracer {
-      Node::Debugger::Tracer::Instruction instruction;
-      Node::Debugger::Tracer::Notification io;
-    } tracer;
-  } debugger;
+//     struct Tracer {
+//       Node::Debugger::Tracer::Instruction instruction;
+//       Node::Debugger::Tracer::Notification io;
+//     } tracer;
+//   } debugger;
 
-  //rsp.cpp
-  auto load(Node::Object) -> void;
+//   //rsp.cpp
+  auto load() -> void;
   auto unload() -> void;
 
   auto main() -> void;
@@ -52,7 +52,7 @@ struct RSP : Thread, Memory::IO<RSP> {
   auto ioRead(u32 address) -> u32;
   auto ioWrite(u32 address, u32 data) -> void;
 
-  //serialization.cpp
+//   //serialization.cpp
   auto serialize(serializer&) -> void;
 
   struct DMA {
@@ -168,11 +168,11 @@ struct RSP : Thread, Memory::IO<RSP> {
   auto XOR(r32& rd, cr32& rs, cr32& rt) -> void;
   auto XORI(r32& rt, cr32& rs, u16 imm) -> void;
 
-  //scc.cpp: System Control Coprocessor
+//   //scc.cpp: System Control Coprocessor
   auto MFC0(r32& rt, u8 rd) -> void;
   auto MTC0(cr32& rt, u8 rd) -> void;
 
-  //vpu.cpp: Vector Processing Unit
+//   //vpu.cpp: Vector Processing Unit
   union r128 {
     struct { uint128_t u128; };
 #if ARCHITECTURE_SUPPORTS_SSE4_1
@@ -312,19 +312,19 @@ struct RSP : Thread, Memory::IO<RSP> {
   u16 reciprocals[512];
   u16 inverseSquareRoots[512];
 
-  //decoder.cpp
-  auto decoderEXECUTE() -> void;
-  auto decoderSPECIAL() -> void;
-  auto decoderREGIMM() -> void;
-  auto decoderSCC() -> void;
-  auto decoderVU() -> void;
-  auto decoderLWC2() -> void;
-  auto decoderSWC2() -> void;
+//   //decoder.cpp
+  // auto decoderEXECUTE() -> void;
+  // auto decoderSPECIAL() -> void;
+//   auto decoderREGIMM() -> void;
+//   auto decoderSCC() -> void;
+//   auto decoderVU() -> void;
+//   auto decoderLWC2() -> void;
+  // auto decoderSWC2() -> void;
 
   auto INVALID() -> void;
 
-  //recompiler.cpp
-  struct Recompiler : recompiler::generic {
+//   //recompiler.cpp
+struct Recompiler : recompiler::generic {
     RSP& self;
     Recompiler(RSP& self) : self(self), generic(allocator) {}
 
@@ -363,8 +363,8 @@ struct RSP : Thread, Memory::IO<RSP> {
 
     auto emit(u12 address) -> Block*;
     auto emitEXECUTE(u32 instruction) -> bool;
-    auto emitSPECIAL(u32 instruction) -> bool;
-    auto emitREGIMM(u32 instruction) -> bool;
+//     auto emitSPECIAL(u32 instruction) -> bool;
+//     auto emitREGIMM(u32 instruction) -> bool;
     auto emitSCC(u32 instruction) -> bool;
     auto emitVU(u32 instruction) -> bool;
     auto emitLWC2(u32 instruction) -> bool;
@@ -382,45 +382,45 @@ struct RSP : Thread, Memory::IO<RSP> {
       return s <= e ? smask & emask : smask | emask;
     }
 
-    bump_allocator allocator;
+//     bump_allocator allocator;
     array<Block*[1024]> context;
     hashset<BlockHashPair> blocks;
     u64 dirty;
   } recompiler{*this};
 
-  struct Disassembler {
-    RSP& self;
-    Disassembler(RSP& self) : self(self) {}
+//   struct Disassembler {
+//     RSP& self;
+//     Disassembler(RSP& self) : self(self) {}
 
-    //disassembler.cpp
-    auto disassemble(u32 address, u32 instruction) -> string;
-    template<typename... P> auto hint(P&&... p) const -> string;
+//     //disassembler.cpp
+//     auto disassemble(u32 address, u32 instruction) -> string;
+//     template<typename... P> auto hint(P&&... p) const -> string;
 
-    bool showColors = true;
-    bool showValues = true;
+//     bool showColors = true;
+//     bool showValues = true;
 
-  private:
-    auto EXECUTE() -> vector<string>;
-    auto SPECIAL() -> vector<string>;
-    auto REGIMM() -> vector<string>;
-    auto SCC() -> vector<string>;
-    auto LWC2() -> vector<string>;
-    auto SWC2() -> vector<string>;
-    auto VU() -> vector<string>;
-    auto immediate(s64 value, u32 bits = 0) const -> string;
-    auto ipuRegisterName(u32 index) const -> string;
-    auto ipuRegisterValue(u32 index) const -> string;
-    auto ipuRegisterIndex(u32 index, s16 offset) const -> string;
-    auto sccRegisterName(u32 index) const -> string;
-    auto sccRegisterValue(u32 index) const -> string;
-    auto vpuRegisterName(u32 index, u32 element = 0) const -> string;
-    auto vpuRegisterValue(u32 index, u32 element = 0) const -> string;
-    auto ccrRegisterName(u32 index) const -> string;
-    auto ccrRegisterValue(u32 index) const -> string;
+//   private:
+//     auto EXECUTE() -> vector<string>;
+//     auto SPECIAL() -> vector<string>;
+//     auto REGIMM() -> vector<string>;
+//     auto SCC() -> vector<string>;
+//     auto LWC2() -> vector<string>;
+//     auto SWC2() -> vector<string>;
+//     auto VU() -> vector<string>;
+//     auto immediate(s64 value, u32 bits = 0) const -> string;
+//     auto ipuRegisterName(u32 index) const -> string;
+//     auto ipuRegisterValue(u32 index) const -> string;
+//     auto ipuRegisterIndex(u32 index, s16 offset) const -> string;
+//     auto sccRegisterName(u32 index) const -> string;
+//     auto sccRegisterValue(u32 index) const -> string;
+//     auto vpuRegisterName(u32 index, u32 element = 0) const -> string;
+//     auto vpuRegisterValue(u32 index, u32 element = 0) const -> string;
+//     auto ccrRegisterName(u32 index) const -> string;
+//     auto ccrRegisterValue(u32 index) const -> string;
 
-    u32 address;
-    u32 instruction;
-  } disassembler{*this};
+//     u32 address;
+//     u32 instruction;
+//   } disassembler{*this};
 };
 
 extern RSP rsp;

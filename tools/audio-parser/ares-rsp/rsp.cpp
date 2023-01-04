@@ -2,7 +2,7 @@
 
 namespace ares::Nintendo64 {
 
-RSP rsp;
+// RSP rsp;
 #include "dma.cpp"
 #include "io.cpp"
 #include "interpreter.cpp"
@@ -10,22 +10,22 @@ RSP rsp;
 #include "interpreter-scc.cpp"
 #include "interpreter-vpu.cpp"
 #include "recompiler.cpp"
-#include "debugger.cpp"
+// #include "debugger.cpp"
 #include "serialization.cpp"
-#include "disassembler.cpp"
+// #include "disassembler.cpp"
 
-auto RSP::load(Node::Object parent) -> void {
-  node = parent->append<Node::Object>("RSP");
+auto RSP::load() -> void {
+  // node = parent->append<Node::Object>("RSP");
   dmem.allocate(4_KiB);
   imem.allocate(4_KiB);
-  debugger.load(node);
+  // debugger.load(node);
 }
 
 auto RSP::unload() -> void {
-  debugger.unload();
+  // debugger.unload();
   dmem.reset();
   imem.reset();
-  node.reset();
+  // node.reset();
 }
 
 auto RSP::main() -> void {
@@ -46,8 +46,8 @@ auto RSP::instruction() -> void {
   if constexpr(Accuracy::RSP::Interpreter) {
     pipeline.address = ipu.pc;
     pipeline.instruction = imem.read<Word>(pipeline.address);
-    debugger.instruction();
-    decoderEXECUTE();
+    // debugger.instruction();
+    // decoderEXECUTE();
     instructionEpilogue();
     step(3);
   }
@@ -121,7 +121,7 @@ auto RSP::power(bool reset) -> void {
   }
 
   if constexpr(Accuracy::RSP::SISD) {
-    platform->status("RSP vectorization disabled (no SSE 4.1 support)");
+    // platform->status("RSP vectorization disabled (no SSE 4.1 support)");
   }
 }
 

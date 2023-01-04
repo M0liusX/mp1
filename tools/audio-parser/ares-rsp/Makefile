@@ -1,10 +1,10 @@
 SRC_DIR := .
-OBJ_DIR := ./obj
-SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
-OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
+OBJ_DIR := .
+SRC_FILES := $(SRC_DIR)/rsp.cpp
+OBJ_FILES := $(OBJ_DIR)/rsp.o
 # LDFLAGS :=
 CPPFLAGS := -g -fpermissive
-CXXFLAGS := -MMD
+CXXFLAGS := -I . -MMD
 
 -include $(OBJ_FILES:.o=.d)
 
@@ -12,4 +12,4 @@ GeMidiToMidi.exe: $(OBJ_FILES)
 	g++ -o $@ $^
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	g++ $(CPPFLAGS) -c -o $@ $<
+	g++ $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
