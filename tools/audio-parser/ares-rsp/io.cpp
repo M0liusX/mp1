@@ -156,40 +156,40 @@ auto RSP::ioWrite(u32 address, u32 data_) -> void {
   // debugger.ioSCC(Write, address, data);
 }
 
-// auto RSP::Status::readWord(u32 address) -> u32 {
-//   address = (address & 0x7ffff) >> 2;
-//   n32 data;
+auto RSP::Status::readWord(u32 address) -> u32 {
+  address = (address & 0x7ffff) >> 2;
+  n32 data;
 
-//   if(address == 0) {
-//     //SP_PC_REG
-//     if(halted) {
-//       data.bit(0,11) = self.ipu.pc;
-//     } else {
-//       data.bit(0,11) = random();
-//     }
-//   }
+  if(address == 0) {
+    //SP_PC_REG
+    if(halted) {
+      data.bit(0,11) = self.ipu.pc;
+    } else {
+      data.bit(0,11) = random();
+    }
+  }
 
-//   if(address == 1) {
-//     //SP_IBIST
-//   }
+  if(address == 1) {
+    //SP_IBIST
+  }
 
-//   self.debugger.ioStatus(Read, address, data);
-//   return data;
-// }
+  // self.debugger.ioStatus(Read, address, data);
+  return data;
+}
 
-// auto RSP::Status::writeWord(u32 address, u32 data_) -> void {
-//   address = (address & 0x7ffff) >> 2;
-//   n32 data = data_;
+auto RSP::Status::writeWord(u32 address, u32 data_) -> void {
+  address = (address & 0x7ffff) >> 2;
+  n32 data = data_;
 
-//   if(address == 0) {
-//     //SP_PC_REG
-//     self.ipu.pc = data.bit(0,11) & ~3;
-//     self.branch.reset();
-//   }
+  if(address == 0) {
+    //SP_PC_REG
+    self.ipu.pc = data.bit(0,11) & ~3;
+    self.branch.reset();
+  }
 
-//   if(address == 1) {
-//     //SP_IBIST
-//   }
+  if(address == 1) {
+    //SP_IBIST
+  }
 
-//   self.debugger.ioStatus(Write, address, data);
-// }
+  // self.debugger.ioStatus(Write, address, data);
+}

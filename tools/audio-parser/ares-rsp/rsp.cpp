@@ -2,7 +2,7 @@
 
 namespace ares::Nintendo64 {
 
-// RSP rsp;
+RSP rsp;
 #include "dma.cpp"
 #include "io.cpp"
 #include "interpreter.cpp"
@@ -12,7 +12,7 @@ namespace ares::Nintendo64 {
 #include "recompiler.cpp"
 // #include "debugger.cpp"
 #include "serialization.cpp"
-// #include "disassembler.cpp"
+#include "disassembler.cpp"
 
 auto RSP::load() -> void {
   // node = parent->append<Node::Object>("RSP");
@@ -47,7 +47,7 @@ auto RSP::instruction() -> void {
     pipeline.address = ipu.pc;
     pipeline.instruction = imem.read<Word>(pipeline.address);
     // debugger.instruction();
-    // decoderEXECUTE();
+    decoderEXECUTE();
     instructionEpilogue();
     step(3);
   }

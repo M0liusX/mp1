@@ -1,5 +1,4 @@
 #pragma once
-//started: 2020-04-28
 
 #define XXH_INLINE_ALL
 #include <xxhash.h>

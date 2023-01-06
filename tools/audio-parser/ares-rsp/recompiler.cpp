@@ -22,40 +22,40 @@ auto RSP::Recompiler::hash(u12 address, u12 size) -> u64 {
   }
 }
 
-// auto RSP::Recompiler::block(u12 address) -> Block* {
-//   if(dirty) {
-//     u12 address = 0;
-//     for(auto& block : context) {
-//       if(block && (dirty & mask(address, block->size)) != 0) {
-//         block = nullptr;
-//       }
-//       address += 4;
-//     }
-//     dirty = 0;
-//   }
+auto RSP::Recompiler::block(u12 address) -> Block* {
+  if(dirty) {
+    u12 address = 0;
+    for(auto& block : context) {
+      if(block && (dirty & mask(address, block->size)) != 0) {
+        block = nullptr;
+      }
+      address += 4;
+    }
+    dirty = 0;
+  }
 
-//   if(auto block = context[address >> 2]) return block;
+  if(auto block = context[address >> 2]) return block;
 
-//   auto size = measure(address);
-//   auto hashcode = hash(address, size);
+  auto size = measure(address);
+  auto hashcode = hash(address, size);
 
-//   BlockHashPair pair;
-//   pair.hashcode = hashcode;
-//   if(auto result = blocks.find(pair)) {
-//     return context[address >> 2] = result->block;
-//   }
+  BlockHashPair pair;
+  pair.hashcode = hashcode;
+  if(auto result = blocks.find(pair)) {
+    return context[address >> 2] = result->block;
+  }
 
-//   auto block = emit(address);
-//   assert(block->size == size);
-//   memory::jitprotect(true);
+  auto block = emit(address);
+  assert(block->size == size);
+  memory::jitprotect(true);
 
-//   pair.block = block;
-//   if(auto result = blocks.insert(pair)) {
-//     return context[address >> 2] = result->block;
-//   }
+  pair.block = block;
+  if(auto result = blocks.insert(pair)) {
+    return context[address >> 2] = result->block;
+  }
 
-//   throw;  //should never occur
-// }
+  throw;  //should never occur
+}
 
 auto RSP::Recompiler::emit(u12 address) -> Block* {
   if(unlikely(allocator.available() < 1_MiB)) {
@@ -126,487 +126,487 @@ auto RSP::Recompiler::emit(u12 address) -> Block* {
   case 0xf: call(name<0xf>); break; \
   }
 
-// auto RSP::Recompiler::emitEXECUTE(u32 instruction) -> bool {
-//   switch(instruction >> 26) {
-
-//   //SPECIAL
-//   case 0x00: {
-//     return emitSPECIAL(instruction);
-//   }
-
-//   //REGIMM
-//   case 0x01: {
-//     return emitREGIMM(instruction);
-//   }
-
-//   //J n26
-//   case 0x02: {
-//     mov32(reg(1), imm(n26));
-//     call(&RSP::J);
-//     return 1;
-//   }
-
-//   //JAL n26
-//   case 0x03: {
-//     mov32(reg(1), imm(n26));
-//     call(&RSP::JAL);
-//     return 1;
-//   }
-
-//   //BEQ Rs,Rt,i16
-//   case 0x04: {
-//     lea(reg(1), Rs);
-//     lea(reg(2), Rt);
-//     mov32(reg(3), imm(i16));
-//     call(&RSP::BEQ);
-//     return 1;
-//   }
-
-//   //BNE Rs,Rt,i16
-//   case 0x05: {
-//     lea(reg(1), Rs);
-//     lea(reg(2), Rt);
-//     mov32(reg(3), imm(i16));
-//     call(&RSP::BNE);
-//     return 1;
-//   }
-
-//   //BLEZ Rs,i16
-//   case 0x06: {
-//     lea(reg(1), Rs);
-//     mov32(reg(2), imm(i16));
-//     call(&RSP::BLEZ);
-//     return 1;
-//   }
-
-//   //BGTZ Rs,i16
-//   case 0x07: {
-//     lea(reg(1), Rs);
-//     mov32(reg(2), imm(i16));
-//     call(&RSP::BGTZ);
-//     return 1;
-//   }
-
-//   //ADDIU Rt,Rs,i16
-//   case 0x08 ... 0x09: {
-//     add32(mem(Rt), mem(Rs), imm(i16));
-//     return 0;
-//   }
-
-//   //SLTI Rt,Rs,i16
-//   case 0x0a: {
-//     cmp32(mem(Rs), imm(i16), set_slt);
-//     mov32_f(mem(Rt), flag_slt);
-//     return 0;
-//   }
-
-//   //SLTIU Rt,Rs,i16
-//   case 0x0b: {
-//     cmp32(mem(Rs), imm(i16), set_ult);
-//     mov32_f(mem(Rt), flag_ult);
-//     return 0;
-//   }
-
-//   //ANDI Rt,Rs,n16
-//   case 0x0c: {
-//     and32(mem(Rt), mem(Rs), imm(n16));
-//     return 0;
-//   }
-
-//   //ORI Rt,Rs,n16
-//   case 0x0d: {
-//     or32(mem(Rt), mem(Rs), imm(n16));
-//     return 0;
-//   }
-
-//   //XORI Rt,Rs,n16
-//   case 0x0e: {
-//     xor32(mem(Rt), mem(Rs), imm(n16));
-//     return 0;
-//   }
-
-//   //LUI Rt,n16
-//   case 0x0f: {
-//     mov32(mem(Rt), imm(s32(n16 << 16)));
-//     return 0;
-//   }
-
-//   //SCC
-//   case 0x10: {
-//     return emitSCC(instruction);
-//   }
-
-//   //INVALID
-//   case 0x11: {
-//     return 0;
-//   }
-
-//   //VPU
-//   case 0x12: {
-//     return emitVU(instruction);
-//   }
-
-//   //INVALID
-//   case 0x13 ... 0x1f: {
-//     return 0;
-//   }
-
-//   //LB Rt,Rs,i16
-//   case 0x20: {
-//     lea(reg(1), Rt);
-//     lea(reg(2), Rs);
-//     mov32(reg(3), imm(i16));
-//     call(&RSP::LB);
-//     return 0;
-//   }
-
-//   //LH Rt,Rs,i16
-//   case 0x21: {
-//     lea(reg(1), Rt);
-//     lea(reg(2), Rs);
-//     mov32(reg(3), imm(i16));
-//     call(&RSP::LH);
-//     return 0;
-//   }
-
-//   //INVALID
-//   case 0x22: {
-//     return 0;
-//   }
-
-//   //LW Rt,Rs,i16
-//   case 0x23: {
-//     lea(reg(1), Rt);
-//     lea(reg(2), Rs);
-//     mov32(reg(3), imm(i16));
-//     call(&RSP::LW);
-//     return 0;
-//   }
-
-//   //LBU Rt,Rs,i16
-//   case 0x24: {
-//     lea(reg(1), Rt);
-//     lea(reg(2), Rs);
-//     mov32(reg(3), imm(i16));
-//     call(&RSP::LBU);
-//     return 0;
-//   }
-
-//   //LHU Rt,Rs,i16
-//   case 0x25: {
-//     lea(reg(1), Rt);
-//     lea(reg(2), Rs);
-//     mov32(reg(3), imm(i16));
-//     call(&RSP::LHU);
-//     return 0;
-//   }
-
-//   //INVALID
-//   case 0x26: {
-//     return 0;
-//   }
-
-//   //LWU Rt,Rs,i16
-//   case 0x27: {
-//     lea(reg(1), Rt);
-//     lea(reg(2), Rs);
-//     mov32(reg(3), imm(i16));
-//     call(&RSP::LWU);
-//     return 0;
-//   }
-
-//   //SB Rt,Rs,i16
-//   case 0x28: {
-//     lea(reg(1), Rt);
-//     lea(reg(2), Rs);
-//     mov32(reg(3), imm(i16));
-//     call(&RSP::SB);
-//     return 0;
-//   }
-
-//   //SH Rt,Rs,i16
-//   case 0x29: {
-//     lea(reg(1), Rt);
-//     lea(reg(2), Rs);
-//     mov32(reg(3), imm(i16));
-//     call(&RSP::SH);
-//     return 0;
-//   }
-
-//   //INVALID
-//   case 0x2a: {
-//     return 0;
-//   }
-
-//   //SW Rt,Rs,i16
-//   case 0x2b: {
-//     lea(reg(1), Rt);
-//     lea(reg(2), Rs);
-//     mov32(reg(3), imm(i16));
-//     call(&RSP::SW);
-//     return 0;
-//   }
-
-//   //INVALID
-//   case 0x2c ... 0x31: {
-//     return 0;
-//   }
-
-//   //LWC2
-//   case 0x32: {
-//     return emitLWC2(instruction);
-//   }
-
-//   //INVALID
-//   case 0x33 ... 0x39: {
-//     return 0;
-//   }
-
-//   //SWC2
-//   case 0x3a: {
-//     return emitSWC2(instruction);
-//   }
-
-//   //INVALID
-//   case 0x3b ... 0x3f: {
-//     return 0;
-//   }
-
-//   }
-
-//   return 0;
-// }
-
-// auto RSP::Recompiler::emitSPECIAL(u32 instruction) -> bool {
-//   switch(instruction & 0x3f) {
-
-//   //SLL Rd,Rt,Sa
-//   case 0x00: {
-//     shl32(mem(Rd), mem(Rt), imm(Sa));
-//     return 0;
-//   }
-
-//   //INVALID
-//   case 0x01: {
-//     return 0;
-//   }
-
-//   //SRL Rd,Rt,Sa
-//   case 0x02: {
-//     lshr32(mem(Rd), mem(Rt), imm(Sa));
-//     return 0;
-//   }
-
-//   //SRA Rd,Rt,Sa
-//   case 0x03: {
-//     ashr32(mem(Rd), mem(Rt), imm(Sa));
-//     return 0;
-//   }
-
-//   //SLLV Rd,Rt,Rs
-//   case 0x04: {
-//     mshl32(mem(Rd), mem(Rt), mem(Rs));
-//     return 0;
-//   }
-
-//   //INVALID
-//   case 0x05: {
-//     return 0;
-//   }
-
-//   //SRLV Rd,Rt,Rs
-//   case 0x06: {
-//     mlshr32(mem(Rd), mem(Rt), mem(Rs));
-//     return 0;
-//   }
-
-//   //SRAV Rd,Rt,Rs
-//   case 0x07: {
-//     mashr32(mem(Rd), mem(Rt), mem(Rs));
-//     return 0;
-//   }
-
-//   //JR Rs
-//   case 0x08: {
-//     lea(reg(1), Rs);
-//     call(&RSP::JR);
-//     return 1;
-//   }
-
-//   //JALR Rd,Rs
-//   case 0x09: {
-//     lea(reg(1), Rd);
-//     lea(reg(2), Rs);
-//     call(&RSP::JALR);
-//     return 1;
-//   }
-
-//   //INVALID
-//   case 0x0a ... 0x0c: {
-//     return 0;
-//   }
-
-//   //BREAK
-//   case 0x0d: {
-//     call(&RSP::BREAK);
-//     return 1;
-//   }
-
-//   //INVALID
-//   case 0x0e ... 0x1f: {
-//     return 0;
-//   }
-
-//   //ADDU Rd,Rs,Rt
-//   case 0x20 ... 0x21: {
-//     add32(mem(Rd), mem(Rs), mem(Rt));
-//     return 0;
-//   }
-
-//   //SUBU Rd,Rs,Rt
-//   case 0x22 ... 0x23: {
-//     sub32(mem(Rd), mem(Rs), mem(Rt));
-//     return 0;
-//   }
-
-//   //AND Rd,Rs,Rt
-//   case 0x24: {
-//     and32(mem(Rd), mem(Rs), mem(Rt));
-//     return 0;
-//   }
-
-//   //OR Rd,Rs,Rt
-//   case 0x25: {
-//     or32(mem(Rd), mem(Rs), mem(Rt));
-//     return 0;
-//   }
-
-//   //XOR Rd,Rs,Rt
-//   case 0x26: {
-//     xor32(mem(Rd), mem(Rs), mem(Rt));
-//     return 0;
-//   }
-
-//   //NOR Rd,Rs,Rt
-//   case 0x27: {
-//     or32(reg(0), mem(Rs), mem(Rt));
-//     not32(reg(0), reg(0));
-//     mov32(mem(Rd), reg(0));
-//     return 0;
-//   }
-
-//   //INVALID
-//   case 0x28 ... 0x29: {
-//     return 0;
-//   }
-
-//   //SLT Rd,Rs,Rt
-//   case 0x2a: {
-//     cmp32(mem(Rs), mem(Rt), set_slt);
-//     mov32_f(mem(Rd), flag_slt);
-//     return 0;
-//   }
-
-//   //SLTU Rd,Rs,Rt
-//   case 0x2b: {
-//     cmp32(mem(Rs), mem(Rt), set_ult);
-//     mov32_f(mem(Rd), flag_ult);
-//     return 0;
-//   }
-
-//   //INVALID
-//   case 0x2c ... 0x3f: {
-//     return 0;
-//   }
-
-//   }
-
-//   return 0;
-// }
-
-// auto RSP::Recompiler::emitREGIMM(u32 instruction) -> bool {
-//   switch(instruction >> 16 & 0x1f) {
-
-//   //BLTZ Rs,i16
-//   case 0x00: {
-//     lea(reg(1), Rs);
-//     mov32(reg(2), imm(i16));
-//     call(&RSP::BLTZ);
-//     return 1;
-//   }
-
-//   //BGEZ Rs,i16
-//   case 0x01: {
-//     lea(reg(1), Rs);
-//     mov32(reg(2), imm(i16));
-//     call(&RSP::BGEZ);
-//     return 1;
-//   }
-
-//   //INVALID
-//   case 0x02 ... 0x0f: {
-//     return 0;
-//   }
-
-//   //BLTZAL Rs,i16
-//   case 0x10: {
-//     lea(reg(1), Rs);
-//     mov32(reg(2), imm(i16));
-//     call(&RSP::BLTZAL);
-//     return 1;
-//   }
-
-//   //BGEZAL Rs,i16
-//   case 0x11: {
-//     lea(reg(1), Rs);
-//     mov32(reg(2), imm(i16));
-//     call(&RSP::BGEZAL);
-//     return 1;
-//   }
-
-//   //INVALID
-//   case 0x12 ... 0x1f: {
-//     return 0;
-//   }
-
-//   }
-
-//   return 0;
-// }
-
-// auto RSP::Recompiler::emitSCC(u32 instruction) -> bool {
-//   switch(instruction >> 21 & 0x1f) {
-
-//   //MFC0 Rt,Rd
-//   case 0x00: {
-//     lea(reg(1), Rt);
-//     mov32(reg(2), imm(Rdn));
-//     call(&RSP::MFC0);
-//     return 0;
-//   }
-
-//   //INVALID
-//   case 0x01 ... 0x03: {
-//     return 0;
-//   }
-
-//   //MTC0 Rt,Rd
-//   case 0x04: {
-//     lea(reg(1), Rt);
-//     mov32(reg(2), imm(Rdn));
-//     call(&RSP::MTC0);
-//     return 0;
-//   }
-
-//   //INVALID
-//   case 0x05 ... 0x1f: {
-//     return 0;
-//   }
-
-//   }
-
-//   return 0;
-// }
+auto RSP::Recompiler::emitEXECUTE(u32 instruction) -> bool {
+  switch(instruction >> 26) {
+
+  //SPECIAL
+  case 0x00: {
+    return emitSPECIAL(instruction);
+  }
+
+  //REGIMM
+  case 0x01: {
+    return emitREGIMM(instruction);
+  }
+
+  //J n26
+  case 0x02: {
+    mov32(reg(1), imm(n26));
+    call(&RSP::J);
+    return 1;
+  }
+
+  //JAL n26
+  case 0x03: {
+    mov32(reg(1), imm(n26));
+    call(&RSP::JAL);
+    return 1;
+  }
+
+  //BEQ Rs,Rt,i16
+  case 0x04: {
+    lea(reg(1), Rs);
+    lea(reg(2), Rt);
+    mov32(reg(3), imm(i16));
+    call(&RSP::BEQ);
+    return 1;
+  }
+
+  //BNE Rs,Rt,i16
+  case 0x05: {
+    lea(reg(1), Rs);
+    lea(reg(2), Rt);
+    mov32(reg(3), imm(i16));
+    call(&RSP::BNE);
+    return 1;
+  }
+
+  //BLEZ Rs,i16
+  case 0x06: {
+    lea(reg(1), Rs);
+    mov32(reg(2), imm(i16));
+    call(&RSP::BLEZ);
+    return 1;
+  }
+
+  //BGTZ Rs,i16
+  case 0x07: {
+    lea(reg(1), Rs);
+    mov32(reg(2), imm(i16));
+    call(&RSP::BGTZ);
+    return 1;
+  }
+
+  //ADDIU Rt,Rs,i16
+  case 0x08 ... 0x09: {
+    add32(mem(Rt), mem(Rs), imm(i16));
+    return 0;
+  }
+
+  //SLTI Rt,Rs,i16
+  case 0x0a: {
+    cmp32(mem(Rs), imm(i16), set_slt);
+    mov32_f(mem(Rt), flag_slt);
+    return 0;
+  }
+
+  //SLTIU Rt,Rs,i16
+  case 0x0b: {
+    cmp32(mem(Rs), imm(i16), set_ult);
+    mov32_f(mem(Rt), flag_ult);
+    return 0;
+  }
+
+  //ANDI Rt,Rs,n16
+  case 0x0c: {
+    and32(mem(Rt), mem(Rs), imm(n16));
+    return 0;
+  }
+
+  //ORI Rt,Rs,n16
+  case 0x0d: {
+    or32(mem(Rt), mem(Rs), imm(n16));
+    return 0;
+  }
+
+  //XORI Rt,Rs,n16
+  case 0x0e: {
+    xor32(mem(Rt), mem(Rs), imm(n16));
+    return 0;
+  }
+
+  //LUI Rt,n16
+  case 0x0f: {
+    mov32(mem(Rt), imm(s32(n16 << 16)));
+    return 0;
+  }
+
+  //SCC
+  case 0x10: {
+    return emitSCC(instruction);
+  }
+
+  //INVALID
+  case 0x11: {
+    return 0;
+  }
+
+  //VPU
+  case 0x12: {
+    return emitVU(instruction);
+  }
+
+  //INVALID
+  case 0x13 ... 0x1f: {
+    return 0;
+  }
+
+  //LB Rt,Rs,i16
+  case 0x20: {
+    lea(reg(1), Rt);
+    lea(reg(2), Rs);
+    mov32(reg(3), imm(i16));
+    call(&RSP::LB);
+    return 0;
+  }
+
+  //LH Rt,Rs,i16
+  case 0x21: {
+    lea(reg(1), Rt);
+    lea(reg(2), Rs);
+    mov32(reg(3), imm(i16));
+    call(&RSP::LH);
+    return 0;
+  }
+
+  //INVALID
+  case 0x22: {
+    return 0;
+  }
+
+  //LW Rt,Rs,i16
+  case 0x23: {
+    lea(reg(1), Rt);
+    lea(reg(2), Rs);
+    mov32(reg(3), imm(i16));
+    call(&RSP::LW);
+    return 0;
+  }
+
+  //LBU Rt,Rs,i16
+  case 0x24: {
+    lea(reg(1), Rt);
+    lea(reg(2), Rs);
+    mov32(reg(3), imm(i16));
+    call(&RSP::LBU);
+    return 0;
+  }
+
+  //LHU Rt,Rs,i16
+  case 0x25: {
+    lea(reg(1), Rt);
+    lea(reg(2), Rs);
+    mov32(reg(3), imm(i16));
+    call(&RSP::LHU);
+    return 0;
+  }
+
+  //INVALID
+  case 0x26: {
+    return 0;
+  }
+
+  //LWU Rt,Rs,i16
+  case 0x27: {
+    lea(reg(1), Rt);
+    lea(reg(2), Rs);
+    mov32(reg(3), imm(i16));
+    call(&RSP::LWU);
+    return 0;
+  }
+
+  //SB Rt,Rs,i16
+  case 0x28: {
+    lea(reg(1), Rt);
+    lea(reg(2), Rs);
+    mov32(reg(3), imm(i16));
+    call(&RSP::SB);
+    return 0;
+  }
+
+  //SH Rt,Rs,i16
+  case 0x29: {
+    lea(reg(1), Rt);
+    lea(reg(2), Rs);
+    mov32(reg(3), imm(i16));
+    call(&RSP::SH);
+    return 0;
+  }
+
+  //INVALID
+  case 0x2a: {
+    return 0;
+  }
+
+  //SW Rt,Rs,i16
+  case 0x2b: {
+    lea(reg(1), Rt);
+    lea(reg(2), Rs);
+    mov32(reg(3), imm(i16));
+    call(&RSP::SW);
+    return 0;
+  }
+
+  //INVALID
+  case 0x2c ... 0x31: {
+    return 0;
+  }
+
+  //LWC2
+  case 0x32: {
+    return emitLWC2(instruction);
+  }
+
+  //INVALID
+  case 0x33 ... 0x39: {
+    return 0;
+  }
+
+  //SWC2
+  case 0x3a: {
+    return emitSWC2(instruction);
+  }
+
+  //INVALID
+  case 0x3b ... 0x3f: {
+    return 0;
+  }
+
+  }
+
+  return 0;
+}
+
+auto RSP::Recompiler::emitSPECIAL(u32 instruction) -> bool {
+  switch(instruction & 0x3f) {
+
+  //SLL Rd,Rt,Sa
+  case 0x00: {
+    shl32(mem(Rd), mem(Rt), imm(Sa));
+    return 0;
+  }
+
+  //INVALID
+  case 0x01: {
+    return 0;
+  }
+
+  //SRL Rd,Rt,Sa
+  case 0x02: {
+    lshr32(mem(Rd), mem(Rt), imm(Sa));
+    return 0;
+  }
+
+  //SRA Rd,Rt,Sa
+  case 0x03: {
+    ashr32(mem(Rd), mem(Rt), imm(Sa));
+    return 0;
+  }
+
+  //SLLV Rd,Rt,Rs
+  case 0x04: {
+    mshl32(mem(Rd), mem(Rt), mem(Rs));
+    return 0;
+  }
+
+  //INVALID
+  case 0x05: {
+    return 0;
+  }
+
+  //SRLV Rd,Rt,Rs
+  case 0x06: {
+    mlshr32(mem(Rd), mem(Rt), mem(Rs));
+    return 0;
+  }
+
+  //SRAV Rd,Rt,Rs
+  case 0x07: {
+    mashr32(mem(Rd), mem(Rt), mem(Rs));
+    return 0;
+  }
+
+  //JR Rs
+  case 0x08: {
+    lea(reg(1), Rs);
+    call(&RSP::JR);
+    return 1;
+  }
+
+  //JALR Rd,Rs
+  case 0x09: {
+    lea(reg(1), Rd);
+    lea(reg(2), Rs);
+    call(&RSP::JALR);
+    return 1;
+  }
+
+  //INVALID
+  case 0x0a ... 0x0c: {
+    return 0;
+  }
+
+  //BREAK
+  case 0x0d: {
+    call(&RSP::BREAK);
+    return 1;
+  }
+
+  //INVALID
+  case 0x0e ... 0x1f: {
+    return 0;
+  }
+
+  //ADDU Rd,Rs,Rt
+  case 0x20 ... 0x21: {
+    add32(mem(Rd), mem(Rs), mem(Rt));
+    return 0;
+  }
+
+  //SUBU Rd,Rs,Rt
+  case 0x22 ... 0x23: {
+    sub32(mem(Rd), mem(Rs), mem(Rt));
+    return 0;
+  }
+
+  //AND Rd,Rs,Rt
+  case 0x24: {
+    and32(mem(Rd), mem(Rs), mem(Rt));
+    return 0;
+  }
+
+  //OR Rd,Rs,Rt
+  case 0x25: {
+    or32(mem(Rd), mem(Rs), mem(Rt));
+    return 0;
+  }
+
+  //XOR Rd,Rs,Rt
+  case 0x26: {
+    xor32(mem(Rd), mem(Rs), mem(Rt));
+    return 0;
+  }
+
+  //NOR Rd,Rs,Rt
+  case 0x27: {
+    or32(reg(0), mem(Rs), mem(Rt));
+    not32(reg(0), reg(0));
+    mov32(mem(Rd), reg(0));
+    return 0;
+  }
+
+  //INVALID
+  case 0x28 ... 0x29: {
+    return 0;
+  }
+
+  //SLT Rd,Rs,Rt
+  case 0x2a: {
+    cmp32(mem(Rs), mem(Rt), set_slt);
+    mov32_f(mem(Rd), flag_slt);
+    return 0;
+  }
+
+  //SLTU Rd,Rs,Rt
+  case 0x2b: {
+    cmp32(mem(Rs), mem(Rt), set_ult);
+    mov32_f(mem(Rd), flag_ult);
+    return 0;
+  }
+
+  //INVALID
+  case 0x2c ... 0x3f: {
+    return 0;
+  }
+
+  }
+
+  return 0;
+}
+
+auto RSP::Recompiler::emitREGIMM(u32 instruction) -> bool {
+  switch(instruction >> 16 & 0x1f) {
+
+  //BLTZ Rs,i16
+  case 0x00: {
+    lea(reg(1), Rs);
+    mov32(reg(2), imm(i16));
+    call(&RSP::BLTZ);
+    return 1;
+  }
+
+  //BGEZ Rs,i16
+  case 0x01: {
+    lea(reg(1), Rs);
+    mov32(reg(2), imm(i16));
+    call(&RSP::BGEZ);
+    return 1;
+  }
+
+  //INVALID
+  case 0x02 ... 0x0f: {
+    return 0;
+  }
+
+  //BLTZAL Rs,i16
+  case 0x10: {
+    lea(reg(1), Rs);
+    mov32(reg(2), imm(i16));
+    call(&RSP::BLTZAL);
+    return 1;
+  }
+
+  //BGEZAL Rs,i16
+  case 0x11: {
+    lea(reg(1), Rs);
+    mov32(reg(2), imm(i16));
+    call(&RSP::BGEZAL);
+    return 1;
+  }
+
+  //INVALID
+  case 0x12 ... 0x1f: {
+    return 0;
+  }
+
+  }
+
+  return 0;
+}
+
+auto RSP::Recompiler::emitSCC(u32 instruction) -> bool {
+  switch(instruction >> 21 & 0x1f) {
+
+  //MFC0 Rt,Rd
+  case 0x00: {
+    lea(reg(1), Rt);
+    mov32(reg(2), imm(Rdn));
+    call(&RSP::MFC0);
+    return 0;
+  }
+
+  //INVALID
+  case 0x01 ... 0x03: {
+    return 0;
+  }
+
+  //MTC0 Rt,Rd
+  case 0x04: {
+    lea(reg(1), Rt);
+    mov32(reg(2), imm(Rdn));
+    call(&RSP::MTC0);
+    return 0;
+  }
+
+  //INVALID
+  case 0x05 ... 0x1f: {
+    return 0;
+  }
+
+  }
+
+  return 0;
+}
 
 auto RSP::Recompiler::emitVU(u32 instruction) -> bool {
   #define E (instruction >> 7 & 15)
@@ -1441,20 +1441,20 @@ auto RSP::Recompiler::isTerminal(u32 instruction) -> bool {
   return 0;
 }
 
-// #undef Sa
-// #undef Rdn
-// #undef Rtn
-// #undef Rsn
-// #undef Vdn
-// #undef Vsn
-// #undef Vtn
-// #undef Rd
-// #undef Rt
-// #undef Rs
-// #undef Vd
-// #undef Vs
-// #undef Vt
-// #undef i16
-// #undef n16
-// #undef n26
-// #undef callvu
+#undef Sa
+#undef Rdn
+#undef Rtn
+#undef Rsn
+#undef Vdn
+#undef Vsn
+#undef Vtn
+#undef Rd
+#undef Rt
+#undef Rs
+#undef Vd
+#undef Vs
+#undef Vt
+#undef i16
+#undef n16
+#undef n26
+#undef callvu

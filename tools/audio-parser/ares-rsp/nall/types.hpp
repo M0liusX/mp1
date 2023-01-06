@@ -6,7 +6,7 @@ using  b1 = nall::Boolean;
 // using  i4 = nall::Integer< 4>; using  s4 = nall::IntegerPrimitive< 4>;
 // using  i5 = nall::Integer< 5>; using  s5 = nall::IntegerPrimitive< 5>;
 // using  i6 = nall::Integer< 6>; using  s6 = nall::IntegerPrimitive< 6>;
-// using  i7 = nall::Integer< 7>; using  s7 = nall::IntegerPrimitive< 7>;
+using  i7 = nall::Integer< 7>; using  s7 = nall::IntegerPrimitive< 7>;
 // using  i8 = nall::Integer< 8>;
 // using  i9 = nall::Integer< 9>; using  s9 = nall::IntegerPrimitive< 9>;
 // using i10 = nall::Integer<10>; using s10 = nall::IntegerPrimitive<10>;
