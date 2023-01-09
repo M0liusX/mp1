@@ -38,7 +38,7 @@ auto MI::readWord(u32 address) -> u32 {
     data.bit(5) = irq.dp.mask;
   }
 
-  debugger.io(Read, address, data);
+  // debugger.io(Read, address, data);
   return data;
 }
 
@@ -57,8 +57,8 @@ auto MI::writeWord(u32 address, u32 data_) -> void {
     if(data.bit(12)) io.rdramRegisterSelect = 0;
     if(data.bit(13)) io.rdramRegisterSelect = 1;
 
-    if(io.initializeMode) debug(unimplemented, "[MI::writeWord] initializeMode=1");
-    if(io.ebusTestMode  ) debug(unimplemented, "[MI::writeWord] ebusTestMode=1");
+    // if(io.initializeMode) debug(unimplemented, "[MI::writeWord] initializeMode=1");
+    // if(io.ebusTestMode  ) debug(unimplemented, "[MI::writeWord] ebusTestMode=1");
   }
 
   if(address == 1) {
@@ -86,5 +86,5 @@ auto MI::writeWord(u32 address, u32 data_) -> void {
     poll();
   }
 
-  debugger.io(Write, address, data);
+  // debugger.io(Write, address, data);
 }

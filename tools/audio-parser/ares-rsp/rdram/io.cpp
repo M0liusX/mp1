@@ -59,7 +59,7 @@ auto RDRAM::readWord(u32 address) -> u32 {
     data = chip.currentControl;
   }
 
-  debugger.io(Read, chipID, address, data);
+  // debugger.io(Read, chipID, address, data);
   return data;
 }
 
@@ -123,5 +123,5 @@ auto RDRAM::writeWord(u32 address, u32 data) -> void {
     chip.currentControl = data;
   }
 
-  debugger.io(Write, chipID, address, data);
+  // debugger.io(Write, chipID, address, data);
 }

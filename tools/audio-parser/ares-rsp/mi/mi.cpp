@@ -1,10 +1,10 @@
-#include <n64/n64.hpp>
+// #include <n64/n64.hpp>
 
 namespace ares::Nintendo64 {
 
 MI mi;
 #include "io.cpp"
-#include "debugger.cpp"
+// #include "debugger.cpp"
 #include "serialization.cpp"
 
 auto MI::load() -> void {
@@ -51,7 +51,7 @@ auto MI::poll() -> void {
   line |= irq.vi.line & irq.vi.mask;
   line |= irq.pi.line & irq.pi.mask;
   line |= irq.dp.line & irq.dp.mask;
-  cpu.scc.cause.interruptPending.bit(2) = line;
+  // cpu.scc.cause.interruptPending.bit(2) = line;
 }
 
 auto MI::power(bool reset) -> void {

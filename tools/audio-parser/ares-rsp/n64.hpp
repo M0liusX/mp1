@@ -9,6 +9,7 @@
 #include <nall/string.hpp>
 #include <nall/float-env.hpp>
 #include <nall/hashset.hpp>
+#include <nall/memory.cpp>
 #include <nall/bump-allocator.hpp>
 #include <nall/recompiler/generic/generic.hpp>
 #include <nall/serializer.hpp>
@@ -19,7 +20,7 @@
 using namespace nall;
 using namespace nall::primitives;
 
-#include <ares/memory/fixed-allocator.cpp>
+#include <ares/memory/fixed-allocator.hpp>
 
 // #include <component/processor/sm5k/sm5k.hpp>
 
@@ -80,7 +81,7 @@ namespace ares::Nintendo64 {
       DD_Motor_Mode,
     };
   };
-  extern Queue queue;
+  Queue queue;
 
   #include <accuracy.hpp>
   #include <memory/memory.hpp>
@@ -102,3 +103,6 @@ namespace ares::Nintendo64 {
 //   #include <n64/memory/bus.hpp>
 //   #include <n64/pi/bus.hpp>
 }
+
+#include <rdram/rdram.cpp>
+#include <mi/mi.cpp>
