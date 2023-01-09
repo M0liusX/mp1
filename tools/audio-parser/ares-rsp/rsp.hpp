@@ -382,7 +382,7 @@ struct Recompiler : recompiler::generic {
       return s <= e ? smask & emask : smask | emask;
     }
 
-//     bump_allocator allocator;
+    bump_allocator allocator;
     array<Block*[1024]> context;
     hashset<BlockHashPair> blocks;
     u64 dirty;

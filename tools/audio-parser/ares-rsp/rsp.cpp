@@ -77,7 +77,7 @@ auto RSP::power(bool reset) -> void {
   pipeline = {};
   dma = {};
   status.semaphore = 0;
-  status.halted = 1;
+  status.halted = 0;
   status.broken = 0;
   status.full = 0;
   status.singleStep = 0;
@@ -115,6 +115,7 @@ auto RSP::power(bool reset) -> void {
   }
 
   if constexpr(Accuracy::RSP::Recompiler) {
+    ares::Memory::FixedAllocator::get().release();
     auto buffer = ares::Memory::FixedAllocator::get().tryAcquire(64_MiB);
     recompiler.allocator.resize(64_MiB, bump_allocator::executable | bump_allocator::zero_fill, buffer);
     recompiler.reset();
@@ -126,3 +127,5 @@ auto RSP::power(bool reset) -> void {
 }
 
 }
+
+#include "rsp-interface.cpp"
