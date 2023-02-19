@@ -40,6 +40,7 @@ s32 alHeapDBAlloc(s32, s32, FXD0_Unk2*, s32, s32);
 
 INCLUDE_ASM(s32, "B980", func_8000AD80);
 
+s16 func_8000ADFC(s8);
 INCLUDE_ASM(s32, "B980", func_8000ADFC);
 
 INCLUDE_ASM(s32, "B980", func_8000AE20);
@@ -206,10 +207,12 @@ INCLUDE_ASM(s32, "B980", func_8000DC44);
 
 INCLUDE_ASM(s32, "B980", func_8000DCCC);
 
+void func_8000DDEC();
 INCLUDE_ASM(s32, "B980", func_8000DDEC);
 
 INCLUDE_ASM(s32, "B980", func_8000DE5C);
 
+void func_8000DF98(s16, s16*);  
 INCLUDE_ASM(s32, "B980", func_8000DF98);
 
 INCLUDE_ASM(s32, "B980", func_8000E21C);
@@ -232,6 +235,7 @@ INCLUDE_ASM(s32, "B980", func_8000F118);
 
 INCLUDE_ASM(s32, "B980", func_8000F198);
 
+void func_8000F238();  
 INCLUDE_ASM(s32, "B980", func_8000F238);
 
 INCLUDE_ASM(s32, "B980", func_8000F294);
@@ -312,28 +316,202 @@ INCLUDE_ASM(s32, "B980", func_8001249C);
 
 INCLUDE_ASM(s32, "B980", func_80012574);
 
+typedef struct {
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+    s32 unkC;
+    s32 unk10[0x2];
+    s16 unk18;
+    s16 unk1A;
+    s32 unk1C;
+    s16 unk20;
+    s8  unk22;
+    s8  unk23;
+    s8  unk24;
+    u8  unk25;
+    s8  unk26;
+    s8  unk27;
+    u8  unk28;
+} unk_D_800CEA94;
+
+typedef struct {
+    s16 unk0;
+    s8  unk2[0x16];
+    u8  unk18;
+} unk_func_80012C7C;
+
+extern s16* D_800CEA90;
+extern unk_D_800CEA94 *D_800CEA94;
+
+extern s32 D_800CEA9C;
+extern s32 D_800CEAA4;
+extern s32 D_800CEAA8;
+extern f32 D_800CEAE8;
+extern f32 D_800CEAEC;
+extern s32 D_800CEAF0;
+extern s8 D_800CEAF4;
+extern s8 D_800CEAF5;
+
+extern s16 D_800CEAB0;
+extern s16 D_800CEAB2;
+extern s16 D_800CEAB4;
+extern s8  D_800CEAB8;
+extern u8  D_800CEAB9;
+extern s8  D_800CEABA;
+extern s8  D_800CEABB;
+
 INCLUDE_ASM(s32, "B980", func_80012654);
 
-INCLUDE_ASM(s32, "B980", func_80012738);
+//INCLUDE_ASM(s32, "B980", func_80012738);
+void func_80012738(s8 arg0) {
+    s16 temp_v0;
 
-INCLUDE_ASM(s32, "B980", func_800127A0);
+    D_800CEAA4 |= 0x10;
+    temp_v0 = func_8000ADFC(arg0);
+    D_800CEAB2 = temp_v0;
+    D_800CEAB0 = temp_v0;
+    func_8000DDEC();
+    D_800CEAA8 = 0;
+    D_800CEAA4 &= ~0x10;
+}
 
-INCLUDE_ASM(s32, "B980", func_8001286C);
+//INCLUDE_ASM(s32, "B980", func_800127A0);
+void func_800127A0(s8 arg0) {
+    s32 i;
+    unk_D_800CEA94* temp_a1;
 
-INCLUDE_ASM(s32, "B980", func_8001293C);
+    D_800CEAA4 |= 0x10;
+    D_800CEAB8 = arg0;
 
-INCLUDE_ASM(s32, "B980", func_80012A18);
+    for (i = 0; i < D_800CEA9C; i++) {
+        temp_a1 = &D_800CEA94[i];
+        if (temp_a1->unkC == 1) {
+            if (!(temp_a1->unk8 & 0x1000) && (temp_a1->unk22 != D_800CEAB8)) {
+                temp_a1->unk8 = (s32) (temp_a1->unk8 | 2);
+            }
+            temp_a1->unk22 = D_800CEAB8;
+        }
+    }
 
-INCLUDE_ASM(s32, "B980", func_80012AF8);
+    D_800CEAA4 &= ~0x10;
+}
 
-INCLUDE_ASM(s32, "B980", func_80012B04);
+//INCLUDE_ASM(s32, "B980", func_8001286C);
+void func_8001286C(u8 arg0) {
+    s32 i;
+    unk_D_800CEA94* temp_a1;
 
-INCLUDE_ASM(s32, "B980", func_80012B10);
+    D_800CEAA4 |= 0x10;
+    arg0 = MIN(arg0, 0x7F);
+    for (i = 0; i < D_800CEA9C; i++) {
+        temp_a1 = &D_800CEA94[i];
+        if (temp_a1->unkC == 1) {
+            if (!(temp_a1->unk8 & 0x1000) && (temp_a1->unk25 != arg0)) {
+                temp_a1->unk8 = (s32) (temp_a1->unk8 | 4);
+            }
+            temp_a1->unk25 = arg0;
+        }
+    }
 
-INCLUDE_ASM(s32, "B980", func_80012B1C);
+    D_800CEAB9 = arg0;
+    D_800CEAA4 &= ~0x10;
+}
 
-INCLUDE_ASM(s32, "B980", func_80012B28);
+//INCLUDE_ASM(s32, "B980", func_8001293C);
+void func_8001293C(s16 arg0) {
+    s32 i;
+    unk_D_800CEA94* temp_a1;
 
-INCLUDE_ASM(s32, "B980", func_80012C70);
+    D_800CEAA4 |= 0x10;
+    arg0 = MIN(0x4B0, arg0);
+    for (i = 0; i < D_800CEA9C; i++) {
+        temp_a1 = &D_800CEA94[i];
+        if (temp_a1->unkC == 1) {
+            if (!(temp_a1->unk8 & 0x1000) && (temp_a1->unk1A != arg0)) {
+                temp_a1->unk8 = (s32) (temp_a1->unk8 | 1);
+            }
+            temp_a1->unk1A = arg0;
+        }
+    }
 
-INCLUDE_ASM(s32, "B980", func_80012C7C);
+    D_800CEAB4 = arg0;
+    D_800CEAA4 &= ~0x10;
+}
+
+//INCLUDE_ASM(s32, "B980", func_80012A18);
+void func_80012A18(s8 arg0) {
+    s32 i;
+    unk_D_800CEA94* temp_a1;
+
+    D_800CEAA4 |= 0x10;
+    arg0 = MAX(arg0, 0);
+    for (i = 0; i < D_800CEA9C; i++) {
+        temp_a1 = &D_800CEA94[i];
+        if (temp_a1->unkC == 1) {
+            if (!(temp_a1->unk8 & 0x10)) {
+                if (!(temp_a1->unk8 & 0x1000) && (temp_a1->unk28 != (arg0 & 0xFF))) {
+                    temp_a1->unk8 = (s32) (temp_a1->unk8 | 8);
+                }
+                temp_a1->unk28 = arg0;
+            }
+        }
+    }
+
+    D_800CEABA = arg0;
+    D_800CEAA4 &= ~0x10;
+}
+
+//INCLUDE_ASM(s32, "B980", func_80012AF8);
+s8 func_80012AF8() {
+    return D_800CEAB8;
+}
+
+// INCLUDE_ASM(s32, "B980", func_80012B04);
+u8 func_80012B04() {
+    return D_800CEAB9;
+}
+
+// INCLUDE_ASM(s32, "B980", func_80012B10);
+s16 func_80012B10() {
+    return D_800CEAB4;
+}
+
+//INCLUDE_ASM(s32, "B980", func_80012B1C);
+s8 func_80012B1C() {
+    return D_800CEABA;
+}
+
+//INCLUDE_ASM(s32, "B980", func_80012B28);
+void func_80012B28(s8 arg0, s8 arg1, s8 arg2, s8 arg3) {
+    if ((D_800CEAA4 & 0x8000) && (*D_800CEA90 == 0x5433)) {
+        D_800CEAF0 = D_800CEA9C;
+        func_8000F238();
+        if (((((arg0 << 0x18) == 0) | ((arg1 << 0x18) == 0)) != 0) || ((((arg2 << 0x18) == 0) | ((arg3 << 0x18) == 0)) != 0)) {
+            D_800CEAF0 = 0;
+        }
+        D_800CEAF4 = arg0;
+        D_800CEAF5 = arg1;
+        D_800CEAE8 = (f32) arg2 / 127.0f;
+        D_800CEAEC = (f32) arg3 / 127.0f;
+    }
+}
+
+//INCLUDE_ASM(s32, "B980", func_80012C70);
+void func_80012C70(s8 arg0) {
+    D_800CEABB = arg0;
+}
+
+//INCLUDE_ASM(s32, "B980", func_80012C7C);
+u32 func_80012C7C(s16 arg0) {
+    unk_func_80012C7C sp10;
+
+    if (D_800CEAA4 & 0x8000) {
+        u8 condition = (arg0 < D_800CEA90[1]) ^ 1;
+        if (( (condition) | ((u32)arg0 >> 0x1F) ) == 0) {
+            func_8000DF98(arg0, &sp10.unk0);
+            return sp10.unk18;
+        }
+    }
+    return -1;
+}
