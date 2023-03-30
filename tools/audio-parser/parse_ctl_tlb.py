@@ -5,8 +5,11 @@ def sort_tuple(tup):
     tup.sort(key = lambda x: x[0])
     return tup
 
+def read_bin(dir):
+    with open(dir, "rb") as f:
+        return f.read()
 def read_rom(root_dir):
-    with open(root_dir + "/baserom.us.z64", "rb") as f:
+    with open(root_dir + "/kirby64.z64", "rb") as f:
         return f.read()
 def get_short(addr):
     return (rom[addr] << 8) + rom[addr + 1]
@@ -35,7 +38,7 @@ def get_wave_ranges(ctl):
             sound = get_long(inst + 0x10 + i * 4) + ctl
             waves.add(get_long(sound + 0x8) + ctl)
 
-    for wave in waves:
+    for wave in waves:g
         base = get_long(wave)
         len = get_long(wave + 0x4)
         waveRanges.append((base, base + len, wave))
@@ -107,6 +110,12 @@ def find_tbl(ctl):
             print("Found tbl: " + hex(base))
             return base
         
+def save_bin(name, start, stop):
+    print(name)
+    with open(name, "wb") as out:
+        for i in range(start, stop):
+            out.write(rom[i].to_bytes(1, 'little'))
+
 
 def get_ctl_range(addr):
     finalBankOffset = get_short(addr + 2) * 4 + addr
@@ -114,7 +123,7 @@ def get_ctl_range(addr):
     finalByte = get_short(finalBankAddress) * 4 + 0xC + finalBankAddress
     finalByte = math.ceil(finalByte/8) * 8
     print("ctl range: " + hex(addr) + " - " + hex(finalByte))
-
+    save_bin("ctl" +str(addr), addr, finalByte)
 
 def sign_extend(value, bits):
     sign_bit = 1 << (bits - 1)
@@ -156,8 +165,9 @@ def get_tbl_range(ctl, tbl, showRanges=False):
             valid = r[0] >= prev
             print(hex(r[0] + tbl) + "-" + hex(r[1] + tbl) + " :" + "(range: + "+ hex(r[1] - r[0]) + "), " + "(wave: " + hex(r[2]) + ") " + ":" + str(valid))
             prev = r[0]
-    print("tlb:  " + hex(tbl) + " - " + hex(waveRanges[-1][1] + tbl))
-
+    # print(waveRanges)
+    print("tlb:  " + hex(tbl) + " - " + hex(waveRanges[0][1] + tbl))
+    save_bin("tbl" + str(tbl), tbl, waveRanges[0][1] + tbl)
 
 def inner_product(len, v1, v2):
     total = 0
@@ -207,8 +217,26 @@ def vadpcm_dec(start, len, book):
                 aiff.write((value & 0xffff).to_bytes(2, 'little'))
             pos += 8
 
+def find_bin():
+    for i in range(len(rom) - len(bin)):
+        found = True
+        for j in range(len(bin)):
+            if bin[j] != rom[i + j]:
+                found = False
+                break
+        if found: print(hex(i))
 
+def swap_bin(name):
+    with open(name, "wb") as out:
+        for i in range(0, len(bin), 4):
+            value = (bin[i] << 24) + (bin[i + 1] << 16) + (bin[i + 2] << 8) + bin[i + 3]
+            out.write((value & 0xffffffff).to_bytes(4, 'little'))
+
+# bin = read_bin("wavetable1.tbl.bin")
+# swap_bin("mp2.ztbl")
 rom = read_rom("./")
+# find_bin()
+
 ctls = find_ctl()
 tbls = [find_tbl(ctl) for ctl in ctls]
 for i in range(len(ctls)):
@@ -216,6 +244,8 @@ for i in range(len(ctls)):
     get_tbl_range(ctls[i], tbls[i])
 
 # Decode wave ranges
+# ctl = 0x1539e40
+# tbl = 0x1563b68
 # waves = get_wave_ranges(ctl)
 # for wave in waves:
 #     len = wave[1] - wave[0]

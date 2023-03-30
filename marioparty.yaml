@@ -1801,8 +1801,12 @@ segments:
     start: 0xFE24BC
   - {type: bin, start: 0x1539e40, name: "../assets/midi/soundbank1.bnk"}
   - {type: bin, start: 0x1563b68, name: "../assets/midi/wavetable1.tbl"}
+  - {type: bin, start: 0x17473b0, name: "../assets/midi/twobeeps.seq"} # sbk file containing seq files below
   - type: bin
-    start: 0x17473b0 # sbk file containing seq files below
+    start: 0x1747420
+  - {type: bin, start: 0x174CF30, name: "../assets/midi/tropical.seq"}
+  - type: bin
+    start: 0x174ED10
   - {type: bin, start: 0x1751958, name: "../assets/midi/rainbow.seq"}
   - type: bin
     start: 0x1753118
