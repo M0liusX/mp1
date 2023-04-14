@@ -1,5 +1,4 @@
-#include "common.h"
-#include "17E710.h"
+#include "HammerDrop.h"
 
 void func_800F65E0_17E710(void) {
     func_800F67BC_17E8EC();
@@ -114,11 +113,10 @@ INCLUDE_ASM(s32, "ovl_1B_HammerDrop/17E710", func_800F74F8_17F628);
 INCLUDE_ASM(s32, "ovl_1B_HammerDrop/17E710", func_800F77E4_17F914);
 
 void func_800F7AD4_17FC04(unkObjectStruct *arg0) {
-    unkGlobalStruct_00 *temp_s0 = arg0->unk_50;
-    unk_Struct01 *test2 = (unkObjectStruct *) temp_s0->unk_E4;
     f32 temp_f22;
     f32 temp;
-
+    unkGlobalStruct_00* temp_s0 = arg0->unk_50;
+    unk_Struct01* test2 = temp_s0->unk_E4;
     temp_f22 = temp_s0->unk_3C;
     (void) test2->unk_50;
     if (test2->unk_50 && temp_s0->unk_E4) {}

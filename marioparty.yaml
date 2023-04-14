@@ -7,7 +7,7 @@ options:
   compiler: GCC
   find_file_boundaries: True
   header_encoding: ASCII
-  # platform: n64
+  platform: n64
   symbol_name_format: $VRAM_$ROM
   undefined_funcs_auto_path: undefined_funcs_auto.txt
   undefined_syms_auto_path: undefined_syms_auto.txt
@@ -22,7 +22,8 @@ options:
   build_path: build
   # extensions_path: tools/splat_ext
   # auto_all_sections: True
-  asm_inc_header: "\t.set noat\n\t.set noreorder\n"
+  asm_inc_header: "\t.include \"macro.inc\"\n\t.set noat\n\t.set noreorder\n"
+  migrate_rodata_to_functions: True
 segments:
   - name: header
     type: header
@@ -42,21 +43,23 @@ segments:
       - [0x99E0, c]
       - [0xB980, c]
       - [0x138F0, c]
-      - [0x14370, c]
-      - [0x14E20, c]
+      - [0x14370, c, "../src/engine/pad"]
+      - [0x14E20, c, "../src/engine/data"] # and input
       - [0x156F0, c]
-      - [0x17D50, c]
-      - [0x180C0, c]
-      - [0x19470, c]
+      - [0x17D50, c, "../src/engine/decode"]
+      - [0x180C0, c, "../src/engine/ovlman"]
+      - [0x18650, c] # unique to mp1?
+      - [0x19470, c, "../src/engine/esprite"]
       - [0x19E70, c]
       - [0x1A2A0, c]
-      - [0x1ACF0, c]
-      - [0x1B200, c]
+      - [0x1ACF0, c, "../src/engine/gameman"]
+      - [0x1B200, c, "../src/engine/graphics"]
+      - [0x1B800, c]
       - [0x1DE40, c]
       - [0x1EA70, c]
-      - [0x22F90, c]
+      - [0x22F90, c, "../src/engine/math"]
       - [0x23C40, c]
-      - [0x241F0, c]
+      - [0x241F0, c, "../src/engine/mallocblock"]
       - [0x24740, c]
       - [0x29C90, c]
       - [0x2C0C0, c]
@@ -64,7 +67,7 @@ segments:
       - [0x388E0, c]
       - [0x3AC60, c]
       - [0x3BF30, c]
-      - [0x3C280, c]
+      - [0x3C280, c, "../src/engine/memory"] # mallocperm, malloctemp, ...?
       - [0x3CED0, c]
       - [0x3DEB0, c]
       - [0x3E560, c]
@@ -77,6 +80,7 @@ segments:
       - [0x46AE0, c]
       - [0x47320, c]
       - [0x48D90, c]
+      - [0x4C460, c, "../src/engine/spaces"]
       - [0x4D770, c, 4D770] # [0xCBC60, .rodata, 4D770]
       - [0x4E530, c]
       - [0x51200, c]
@@ -91,45 +95,273 @@ segments:
       - [0x5CDB0, c]
       - [0x61B70, c]
       - [0x62140, c]
-      - [0x643C0, c]
-      - [0x64B40, c]
+      - [0x63C60, c, "../src/engine/process"]
+      - [0x643C0, c, "../src/engine/nnsched"]
+      - [0x64B40, c, "../src/engine/siman"]
       - [0x64FD0, c]
       - [0x65770, c]
       - [0x69010, c]
       - [0x6C470, c]
       - [0x6D4E0, c]
       - [0x72D90, c]
-      - [0x7C9F0, c]
-      - [0x7CC80, c]
+      - [0x7C9F0, c, "../src/lib/2.0I/audio/synstartvoiceparam"] # -O0
+      - [0x7CB80, c, "../src/lib/2.0I/audio/synsetpan"] # -O0
+      - [0x7CC80, hasm, "lib/sys/setjmp"] # and longjmp
       - [0x7CD60, c]
-      - [0x80770, c]
-      - [0x80BE0, c]
-      - [0x821F0, c]
-      - [0x82440, c]
-      - [0x82590, c]
-      - [0x82680, c]
-      - [0x828C0, c]
-      - [0x82AF0, c]
-      - [0x83260, c]
-      - [0x833C0, c]
-      - [0x83490, bin]
-      #- [0x83490, c] #has some code, weird to split?
-      - [0x83960, c]
-      #- [0x89250, c, ../lib/ultralib/src/os/createthread]
-      #- [0x89320, c, ../lib/ultralib/src/os/destroythread]
-      # - [0x894A0, c, ../lib/ultralib/src/os/getthreadpri]
-      # - [0x894A0, c, ../lib/ultralib/src/os/gettime]
-      # - [0x894A0, c, ../lib/ultralib/src/os/jammesg]
-      # - [0x895E0, c, ../lib/ultralib/src/os/recvmesg]
-      # - [0x89710, c, ../lib/ultralib/src/os/sendmesg]
-      # - [0x89840, c]
-      - [0x89E90, c] #
-      - [0x89EA0, c] # -O0?
-      # - [0x93430, hasm, ../lib/ultralib/src/os/exceptasm]
-      # - [0x93DA0, c]
+      - [0x80770, bin, "libleo"]
+      - [0x861B0, hasm, "lib/2.0I/gu/sqrtf"]
+      - [0x861C0, c, "../src/lib/2.0I/gu/cosf"]
+      - [0x86310, c, "../src/lib/2.0I/gu/lookat"]
+      - [0x86A20, c, "../src/lib/2.0I/gu/lookatref"]
+      - [0x87010, c, "../src/lib/2.0I/gu/lookathil"]
+      - [0x87A70, c, "../src/lib/2.0I/gu/mtxutil"]
+      - [0x87CF0, c, "../src/lib/2.0I/gu/mtxcatf"]
+      - [0x87E80, c, "../src/lib/2.0I/gu/mtxcatl"]
+      - [0x87F80, c, "../src/lib/2.0I/gu/ortho"]
+      - [0x88200, c, "../src/lib/2.0I/gu/perspective"]
+      - [0x88580, c, "../src/lib/2.0I/gu/rotate"]
+      - [0x88860, c, "../src/lib/2.0I/gu/rotateRPY"]
+      - [0x88B80, c, "../src/lib/2.0I/gu/scale"]
+      - [0x88C60, c, "../src/lib/2.0I/gu/sinf"]
+      - [0x88E00, c, "../src/lib/2.0I/gu/translate"]
+      - [0x88ED0, c, "../src/lib/2.0I/gu/random"]
+      - [0x88F00, hasm, "lib/2.0I/os/invaldcache"]
+      - [0x88FB0, hasm, "lib/2.0I/os/invalicache"]
+      - [0x89090, hasm, "lib/2.0I/os/setintmask"]
+      - [0x89130, hasm, "lib/2.0I/os/setcause"]
+      - [0x89140, hasm, "lib/2.0I/os/setcompare"]
+      - [0x89150, hasm, "lib/2.0I/os/setcount"]
+      - [0x89160, hasm, "lib/2.0I/os/setsr"]
+      - [0x89170, hasm, "lib/2.0I/os/osWritebackDCache"]
+      - [0x891F0, hasm, "lib/2.0I/os/writebackdcacheall"]
+      - [0x89220, c, "../src/lib/2.0I/os/createmesgqueue"]
+      - [0x89250, c, "../src/lib/2.0I/os/createthread"]
+      - [0x89320, c, "../src/lib/2.0I/os/destroythread"]
+      - [0x893F0, c, "../src/lib/2.0I/os/getthreadpri"]
+      - [0x89410, c, "../src/lib/2.0I/os/gettime"]
+      - [0x894A0, c, "../src/lib/2.0I/os/jammesg"]
+      - [0x895E0, c, "../src/lib/2.0I/os/recvmesg"]
+      - [0x89710, c, "../src/lib/2.0I/os/sendmesg"]
+      - [0x89840, c, "../src/lib/2.0I/os/setthreadpri"]
+      - [0x89910, c, "../src/lib/2.0I/os/startthread"]
+      - [0x89A30, c, "../src/lib/2.0I/os/stopthread"]
+      - [0x89AF0, c, "../src/lib/2.0I/os/thread"]
+      - [0x89B30, c, "../src/lib/2.0I/os/timerintr"]
+      - [0x89E30, c, "../src/lib/2.0I/os/virtualtophysical"]
+      - [0x89E90, c] # Empty?
+      - [0x89EA0, c, "../src/lib/2.0I/audio/bnkf"]
+      - [0x8A170, c, "../src/lib/2.0I/audio/event"]
+      - [0x8A4C0, c, "../src/lib/2.0I/audio/sl"]
+      - [0x8A570, c, "../src/lib/2.0I/audio/heapinit"]
+      - [0x8A5B0, c, "../src/lib/2.0I/audio/heapalloc"]
+      - [0x8A600, c, "../src/lib/2.0I/audio/copy"]
+      - [0x8A640, c, "../src/lib/2.0I/audio/cseq"]
+      - [0x8B100, c, "../src/lib/2.0I/audio/seqpdelete"]
+      - [0x8B120, c, "../src/lib/2.0I/audio/seqpgetfxmix"]
+      - [0x8B140, c, "../src/lib/2.0I/audio/seqpgetpan"]
+      - [0x8B160, c, "../src/lib/2.0I/audio/seqpgetchlvol"]
+      - [0x8B180, c, "../src/lib/2.0I/audio/seqpgetprogram"]
+      - [0x8B200, c, "../src/lib/2.0I/audio/cspgettempo"]
+      - [0x8B230, c, "../src/lib/2.0I/audio/seqpgetstate"]
+      - [0x8B240, c, "../src/lib/2.0I/audio/seqpplay"]
+      - [0x8B270, c, "../src/lib/2.0I/audio/seqpsetbank"]
+      - [0x8B2A0, c, "../src/lib/2.0I/audio/seqpsetfxmix"]
+      - [0x8B2F0, c, "../src/lib/2.0I/audio/seqpsetseq"]
+      - [0x8B320, c, "../src/lib/2.0I/audio/seqpsettempo"]
+      - [0x8B370, c, "../src/lib/2.0I/audio/seqpsetvol"]
+      - [0x8B3A0, c, "../src/lib/2.0I/audio/seqpstop"]
+      - [0x8B3D0, c, "../src/lib/2.0I/audio/sndpdelete"]
+      - [0x8B400, c, "../src/lib/2.0I/audio/sndpallocate"]
+      - [0x8B4C0, c, "../src/lib/2.0I/audio/sndpdeallocate"]
+      - [0x8B510, c, "../src/lib/2.0I/audio/sndpsetsound"]
+      - [0x8B520, c, "../src/lib/2.0I/audio/sndpplay"]
+      - [0x8B580, c, "../src/lib/2.0I/audio/sndpgetsound"]
+      - [0x8B590, c, "../src/lib/2.0I/audio/sndpstop"]
+      - [0x8B5E0, c, "../src/lib/2.0I/audio/sndpgetstate"]
+      - [0x8B600, c, "../src/lib/2.0I/audio/sndpsetpitch"]
+      - [0x8B650, c, "../src/lib/2.0I/audio/sndpsetpriority"]
+      - [0x8B680, c, "../src/lib/2.0I/audio/sndpsetvol"]
+      - [0x8B6D0, c, "../src/lib/2.0I/audio/sndpsetpan"]
+      - [0x8B720, c, "../src/lib/2.0I/audio/sndpsetfxmix"]
+      - [0x8B770, c, "../src/lib/2.0I/audio/syndelete"]
+      - [0x8B780, c, "../src/lib/2.0I/audio/synaddplayer"]
+      - [0x8B7D0, c, "../src/lib/2.0I/audio/synremoveplayer"]
+      - [0x8B870, c, "../src/lib/2.0I/audio/synfreevoice"]
+      - [0x8B910, c, "../src/lib/2.0I/audio/synallocvoice"]
+      - [0x8BAF0, c, "../src/lib/2.0I/audio/synstopvoice"]
+      - [0x8BB70, c, "../src/lib/2.0I/audio/synstartvoice"]
+      - [0x8BC10, c, "../src/lib/2.0I/audio/synsetpitch"]
+      - [0x8BCA0, c, "../src/lib/2.0I/audio/synsetvol"]
+      - [0x8BD60, c, "../src/lib/2.0I/audio/cents2ratio"]
+      - [0x8BDC0, c, "../src/lib/2.0I/io/aigetlen"]
+      - [0x8BDD0, c, "../src/lib/2.0I/io/aisetnextbuf"]
+      - [0x8BE70, c, "../src/lib/2.0I/io/sptask"]
+      - [0x8C0B0, c, "../src/lib/2.0I/io/sptaskyield"]
+      - [0x8C0D0, c, "../src/lib/2.0I/io/sptaskyielded"]
+      - [0x8C120, c, "../src/lib/2.0I/io/vigetcurrframebuf"]
+      - [0x8C160, c, "../src/lib/2.0I/io/vigetnextframebuf"]
+      - [0x8C1A0, c, "../src/lib/2.0I/io/visetevent"]
+      - [0x8C200, c, "../src/lib/2.0I/io/visetmode"]
+      - [0x8C250, c, "../src/lib/2.0I/io/viswapbuf"]
+      - [0x8C2A0, c, "../src/lib/2.0I/io/viblack"]
+      - [0x8C300, c, "../src/lib/2.0I/io/controller"]
+      - [0x8C610, c, "../src/lib/2.0I/io/contsetch"]
+      - [0x8C670, c, "../src/lib/2.0I/io/pfsisplug"]
+      - [0x8C950, c, "../src/lib/2.0I/io/conteeplongwrite"]
+      - [0x8CA40, c, "../src/lib/2.0I/io/conteeplongread"]
+      - [0x8CAB0, c, "../src/lib/2.0I/io/epidma"]
+      - [0x8CB50, c, "../src/lib/2.0I/io/piacs"]
+      - [0x8CC40, hasm, "lib/2.0I/libc/bcopy"]
+      - [0x8CF60, hasm, "lib/2.0I/libc/bzero"]
+      - [0x8D000, c, "../src/lib/2.0I/libc/string"]
+      - [0x8D090, c, "../src/lib/2.0I/libc/sprintf"]
+      - [0x8D120, c, "../src/lib/2.0I/libc/syncprintf"]
+      - [0x8D150, c, "../src/lib/2.0I/audio/csplayer"]
+      - [0x8E3B0, c, "../src/lib/2.0I/audio/seqplayer"]
+      - [0x8FD50, c, "../src/lib/2.0I/audio/synsetfxmix"]
+      - [0x8FDF0, c, "../src/lib/2.0I/audio/synthesizer"]
+      - [0x90430, c, "../src/lib/2.0I/io/aisetfreq"]
+      - [0x90550, c, "../src/lib/2.0I/io/cartrominit"] # TODO: Fix common (__CartRomHandle)
+      - [0x906D0, c, "../src/lib/2.0I/io/conteepprobe"]
+      - [0x90750, c, "../src/lib/2.0I/io/conteepread"] # TODO: Fix common (__osEepPifRam)
+      - [0x90970, c, "../src/lib/2.0I/io/conteepwrite"]
+      - [0x90D20, c, "../src/lib/2.0I/io/contreaddata"]
+      - [0x90F00, c, "../src/lib/2.0I/io/epirawdma"]
+      - [0x910F0, c, "../src/lib/2.0I/io/epiread"]
+      - [0x91150, c, "../src/lib/2.0I/io/epiwrite"]
+      - [0x911B0, c, "../src/lib/2.0I/io/motor"]
+      - [0x91540, c, "../src/lib/2.0I/io/pfsallocatefile"]
+      - [0x91970, c, "../src/lib/2.0I/io/pfsdeletefile"]
+      - [0x91B90, c, "../src/lib/2.0I/io/pfsfilestate"]
+      - [0x91D20, c, "../src/lib/2.0I/io/pfsfreeblocks"]
+      - [0x91E30, c, "../src/lib/2.0I/io/pfsinitpak"]
+      - [0x92100, c, "../src/lib/2.0I/io/pfsnumfiles"]
+      - [0x92200, c, "../src/lib/2.0I/io/pfsreadwritefile"]
+      - [0x92640, c, "../src/lib/2.0I/io/pfsrepairid"]
+      - [0x926A0, c, "../src/lib/2.0I/io/pfssearchfile"]
+      - [0x92840, c, "../src/lib/2.0I/io/pfsselectbank"]
+      - [0x928B0, c, "../src/lib/2.0I/io/pimgr"] # TODO: Fix common
+      - [0x92A40, c, "../src/lib/2.0I/io/pirawdma"]
+      - [0x92B10, c, "../src/lib/2.0I/io/sirawdma"]
+      - [0x92BC0, c, "../src/lib/2.0I/io/sprawdma"]
+      - [0x92C50, c, "../src/lib/2.0I/io/vimgr"] # TODO: Fix common
+      - [0x92F90, c, "../src/lib/2.0I/io/visetspecial"]
+      - [0x93100, c, "../src/lib/2.0I/io/viswapcontext"]
+      - [0x93410, c, "../src/lib/2.0I/os/afterprenmi"]
+      - [0x93430, hasm, "lib/2.0I/os/exceptasm"]
+      - [0x93DA0, c, "../src/lib/2.0I/os/getmemsize"]
+      - [0x93E40, c, "../src/lib/2.0I/os/initialize"]
+      - [0x94120, hasm, "lib/2.0I/os/interrupt"]
+      - [0x941B0, c, "../src/lib/2.0I/os/seteventmesg"]
+      - [0x94260, c, "../src/lib/2.0I/os/sethwinterrupt"]
+      - [0x942C0, hasm, "lib/2.0I/mgu/guNormalize"]
+      - [0x94370, hasm, "lib/2.0I/os/getcause"]
+      - [0x94380, hasm, "lib/2.0I/os/getcount"]
+      - [0x94390, hasm, "lib/2.0I/os/getsr"]
+      - [0x943A0, hasm, "lib/2.0I/os/probetlb"]
+      - [0x94460, hasm, "lib/2.0I/os/setfpccsr"]
+      - [0x94470, hasm, "lib/2.0I/os/unmaptlball"]
+      - [0x944C0, hasm, "lib/2.0I/os/osmaptlbrdb"]
+      - [0x94520, c, "../src/lib/2.0I/os/settimer"]
+      - [0x945C0, c, "../src/lib/2.0I/audio/load"]
+      - [0x950D0, c, "../src/lib/2.0I/audio/auxbus"]
+      - [0x951E0, c, "../src/lib/2.0I/audio/mainbus"]
+      - [0x95350, c, "../src/lib/2.0I/audio/resample"]
+      - [0x95600, c, "../src/lib/2.0I/audio/seq"]
+      - [0x95BF0, c] # -O0?
+      - [0x95C00, c]
+      - [0x95CA0, c]
+      - [0x95CC0, c]
+      - [0x95CE0, c]
+      - [0x95E40, c]
+      - [0x95E50, c]
+      - [0x95F40, c]
+      - [0x96AA0, c]
+      - [0x972D0, c]
+      - [0x98B20, c]
+      - [0x99680, c]
+      - [0x99880, c]
+      - [0x99AA0, c]
+      - [0x99B90, c]
+      - [0x99F50, c]
+      - [0x9A0C0, c]
+      - [0x9A230, c]
+      - [0x9AB60, c]
+      - [0x9ABB0, c]
+      - [0x9AC00, c]
+      - [0x9AC50, c]
+      - [0x9ACE0, c]
+      - [0x9AD00, c]
+      - [0x9AD20, c]
+      - [0x9AF70, c]
+      - [0x9B9F0, c]
+      - [0x9BBB0, c]
+      - [0x9BBD0, c]
+      - [0x9BD50, c]
+      - [0x9C190, c]
+      - [0x9C370, c]
+      - [0x9C440, c]
+      - [0x9C560, c]
+      - [0x9C630, hasm] #something jank here with this file and following 2 files
+      - [0x9C8A0, hasm]
+      - [0x9CA10, hasm]
+      - [0x9CA30, hasm]
+      - [0x9CB90, c]
+      - [0x9CC90, c]
+      - [0x9CCA0, c]
+      - [0x9CD00, c]
+      - [0x9CD60, c]
+      - [0x9CE40, c]
+      - [0x9D2E0, c]
+      - [0x9D370, c]
+      - [0x9D920, c]
+      - [0x9D9B0, c]
+      - [0x9E440, c]
+      - [0x9E520, c]
+      - [0x9E6D0, c]
+      - [0x9E750, c]
+      - [0x9E910, c]
+      - [0x9E990, c]
+      - [0x9EBF0, c]
+      - [0x9EC60, c]
+      - [0x9EF60, c]
+      - [0x9F3E0, c]
+      - [0x9F4F0, c]
+      - [0x9F750, c]
+      - [0x9FED0, c]
+      - [0xA0130, c]
+      - [0xA05B0, c]
+      - [0xA0940, c]
+      - [0xA0E70, c]
+      - [0xA0FB0, c]
+      - [0xA1330, c]
+      - [0xA1490, c]
+      - [0xA1500, c]
+      - [0xA1570, c]
+      - [0xA15D0, c]
+      - [0xA1620, c]
+      - [0xA19A0, c]
+      - [0xA1A80, c]
+      - [0xA1B00, c]
+      - [0xA1C10, c]
+      - [0xA1D90, c]
+      - [0xA1E00, c]
+      - [0xA1E50, c]
       - [0xA2080, c] # -O0?
       - [0xA21C0, c] # -O0?
+      - [0xA2260, c] # -O0?
+      - [0xA23A0, c] # -O0?
+      - [0xA24F0, c] # -O0?
+      - [0xA27D0, c] # -O0?
       - [0xA29F0, c] # -O0?
+      - [0xA2A40, c] # -O0?
+      - [0xA2A90, c] # -O0?
+      - [0xA2AF0, c] # -O0?
+      - [0xA2E80, c] # -O0?
+      - [0xA2EE0, c] # -O0?
+      - [0xA30C0, c] # -O0?
+      - [0xA3110, c] # -O0?
+      - [0xA3320, c] # -O0?
       - [0xA3370, c] # -O0?
       - [0xA3600, c] # -O0?
       - [0xA3650, c] # -O0?
@@ -200,29 +432,71 @@ segments:
       - [0xB2310, c] # -O0
       - [0xB2340, c] # sqrtd
       - [0xB2350, c] # sqrtf
-  - type: bin
-    start: 0xB2360
-  - type: code
-    start: 0xC25A0
-    vram: 0x800C19A0
-    subsegments:
+      - [0xB2360, bin]
       - [0xC25A0, data, 180C0]
-  - type: bin
-    start: 0xC3DE0
-  # - type: code
-  #   start: 0xC72F0
-  #   vram: 0x800C76F0
-  #   subsegments:
-  #       - [0xC72F0, .data, ../lib/ultralib/src/os/exceptasm]
-  # - type: bin
-  #   start: 0xC7320
-  # - type: code
-  #   start: 0xCBC60
-  #   vram: 0x800CB060
-  #   subsegments:
-  #     - [0xCBC60, .rodata, 4D770]
-  - type: bin
-    start: 0xCBC90
+      - [0xC2870, data, overlay_table]
+      - [0xC3DE0, bin]
+      - [0xC58D0, data, minigamelist]
+      - [0xC5940, bin]
+
+  # 2.0I N64 lib .data sections
+      - [0xC7070, .data, "../src/lib/2.0I/gu/rotate"]
+      - [0xC7080, .data, "../src/lib/2.0I/gu/rotateRPY"]
+      - [0xC7090, bin] # TODO: Figure this out 
+      - [0xC70D0, .data, "../src/lib/2.0I/audio/sl"]
+      - [0xC70E0, .data, "../src/lib/2.0I/io/aisetnextbuf"]
+      - [0xC70F0, .data, "../src/lib/2.0I/io/controller"]
+      - [0xC7100, .data, "../src/lib/2.0I/io/piacs"]
+      - [0xC7110, .data, "../src/lib/2.0I/io/cartrominit"]
+      - [0xC7120, .data, "../src/lib/2.0I/io/pimgr"]
+      - [0xC7150, .data, "../src/lib/2.0I/io/vimgr"]
+      - [0xC7170, bin] # TODO: Figure this out 
+      - [0xC8320, .data, "../src/lib/2.0I/os/initialize"]
+      - [0xC8340, .data, "../src/lib/2.0I/os/seteventmesg"]
+      - [0xC8350, bin] # TODO: Figure this out 
+
+      - [0xCB6C0, .rodata, 3F5B0]
+      - [0xCB7D0, bin]
+      - [0xCBD80, .rodata, 51200] #800CB180
+      #- [0xCBDC0, .rodata, 54120] #800CB1C0
+      - [0xCBDC0, bin] #800CB1C0
+      - [0xCBEB0, .rodata, 57330] #800CB2B0
+      - [0xCBFB0, bin]
+      #- [0xCBFB0, .rodata, 59510] #800CB3B0
+      
+      
+
+  # 2.0I N64 lib .rodata sections
+      #    - [0xCBC60, .rodata, 4D770]
+      - [0xCCED0, .rodata, "../src/lib/2.0I/gu/cosf"]
+      - [0xCCF30, .rodata, "../src/lib/2.0I/gu/lookat"]
+      - [0xCCF50, .rodata, "../src/lib/2.0I/gu/lookatref"]
+      - [0xCCF60, .rodata, "../src/lib/2.0I/gu/lookathil"]
+      - [0xCCF90, .rodata, "../src/lib/2.0I/gu/perspective"]
+      - [0xCCFD0, .rodata, "../src/lib/2.0I/gu/sinf"]
+      - [0xCD030, bin] # __osRcpImTable
+      - [0xCD0B0, .rodata, "../src/lib/2.0I/audio/cseq"]
+      - [0xCD110, .rodata, "../src/lib/2.0I/audio/csplayer"]
+      - [0xCD210, .rodata, "../src/lib/2.0I/audio/seqplayer"]
+      - [0xCD230, .rodata, "../src/lib/2.0I/audio/synthesizer"]
+      - [0xCD240, .rodata, "../src/lib/2.0I/io/aisetfreq"]
+      - [0xCD250, .rodata, "../src/lib/2.0I/io/viswapcontext"]
+      - [0xCD260, bin] # TODO: Figure this out 
+      - [0xCD2C0, .rodata, "../src/lib/2.0I/audio/resample"]
+      - [0xCD2F0, .rodata, "../src/lib/2.0I/audio/seq"]
+      - [0xCD320, bin] # TODO: Figure this out 
+
+    # 2.0I N64 lib .bss sections
+      - [0xCDA50, .bss, "../src/padding/bss_padding_1d330"] # TODO: Figure this out
+      - [0xCDA50, .bss, "../src/lib/2.0I/io/sptask"]
+      - [0xCDA50, .bss, "../src/lib/2.0I/io/controller"]
+      - [0xCDA50, .bss, "../src/lib/2.0I/io/piacs"]
+      - [0xCDA50, .bss, "../src/lib/2.0I/io/motor"]
+      - [0xCDA50, .bss, "../src/lib/2.0I/io/pimgr"]
+      - [0xCDA50, .bss, "../src/lib/2.0I/io/vimgr"]
+      #- [0xCDA50, .bss, "../src/padding/bss_padding_b2b0"] # TODO: Figure this out (padding betwen bss and common?)
+      #- [0xCDA50, .bss, "../src/lib/2.0I/io/pfsisplug"]
+
   - type: code
     start: 0xCDA50
     vram: 0x800F65E0
@@ -230,11 +504,12 @@ segments:
     name: MemoryMatch
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0xCDA50, c]
-  - type: bin
-    start: 0xD4C50
-    subsegments:
+      - [0xD27D0, c]
+      - [0xD4C50, data, CDA50]
+      #- [0xD4F48, rodata, CDA50]
       - [0xD4C50, bin]
   - type: code
     start: 0xD51E0
@@ -243,66 +518,81 @@ segments:
     name: ChanceTime
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0xD51E0, c]
+      - [0xDAF90, c]
       - [0xDD760, c]
       - [0xDE2D0, c]
       - [0xDE6A0, c]
   - type: bin
     start: 0xDFDF0
   - type: code
-    start: 0x0E02F0
+    start: 0xE02F0
     vram: 0x800F65E0
     dir: ovl_02_SlotMachine
     name: SlotMachine
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
-      - [0x0E02F0, c]
-  - type: bin
-    start: 0x0E7E10
+      - [0xE02F0, c]
+      - [0xE13F0, c]
+      - [0xE5DA0, c]
+      # - [0xE7E10, data, E02F0]
+      # - [0xE8B18, rodata, E02F0]
+      - [0xE7E10, bin]
   - type: code
-    start: 0x0E8F60
+    start: 0xE8F60
     vram: 0x800F65E0
     dir: ovl_03_BuriedTreasure
     name: BuriedTreasure
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
-      - [0x0E8F60, c]
-  - type: bin
-    start: 0x0EE3F0
+      - [0xE8F60, c]
+      - [0xEB0E0, c]
+      - [0xEE3F0, data]
+      - [0xEE7E0, rodata]
   - type: code
-    start: 0x0EE9A0
+    start: 0xEE9A0
     vram: 0x800F65E0
     dir: ovl_04_TreasureDivers
     name: TreasureDivers
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
-      - [0x0EE9A0, c]
-  - type: bin
-    start: 0x0F6750
+      - [0xEE9A0, c]
+      - [0xF2800, c]
+      - [0xF4420, c]
+      - [0xF6750, data]
+      - [0xF6830, rodata]
   - type: code
-    start: 0x0F6AB0
+    start: 0xF6AB0
     vram: 0x800F65E0
     dir: ovl_05_ShellGame
     name: ShellGame
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
-      - [0x0F6AB0, c]
-  - type: bin
-    start: 0x0FF0E0
+      - [0xF6AB0, c]
+      - [0xFD460, c]
+      - [0xFF0E0, data, F6AB0]
   - type: code
-    start: 0x0FF570
+    start: 0xFF570
     vram: 0x800F65E0
     dir: ovl_06_UnusedMinigame0
     name: UnusedMinigame0
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
-      - [0x0FF570, c]
+      - [0xFF570, c]
+      - [0x103D80, c]
+      - [0x105EA0, c]
   - type: bin
     start: 0x10BA80
   - type: code
@@ -312,8 +602,11 @@ segments:
     name: HotBobOmb
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x10CD10, c]
+      - [0x10CF70, c]
+      - [0x10F6D0, c]
   - type: bin
     start: 0x110460
   - type: code
@@ -323,8 +616,12 @@ segments:
     name: UnusedMinigame1
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x110F90, c]
+      - [0x111890, c]
+      - [0x1127C0, c]
+      - [0x113730, c]
   - type: bin
     start: 0x113B20
   - type: code
@@ -334,6 +631,7 @@ segments:
     name: PipeMaze
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x113DC0, c]
   - type: bin
@@ -345,8 +643,10 @@ segments:
     name: GhostGuess
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x117210, c]
+      - [0x11BFE0, c]
   - type: bin
     start: 0x11C2A0
   - type: code
@@ -356,8 +656,10 @@ segments:
     name: MusicalMushroom
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x11C810, c]
+      - [0x11F890, c]
   - type: bin
     start: 0x1216F0
   - type: code
@@ -367,8 +669,10 @@ segments:
     name: PedalPower
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1217D0, c]
+      - [0x122BA0, c]
       - [0x1240D0, c]
   - type: bin
     start: 0x124FD0
@@ -379,6 +683,7 @@ segments:
     name: CrazyCutter
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1250D0, c]
       - [0x12AFE0, c]
@@ -391,6 +696,7 @@ segments:
     name: FaceLift
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x12BC20, c]
   - type: bin
@@ -402,8 +708,10 @@ segments:
     name: WhackAPlant
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x131FA0, c]
+      - [0x136C10, c]
   - type: bin
     start: 0x136F40
   - type: code
@@ -413,6 +721,7 @@ segments:
     name: BashNCash
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x137050, c]
   - type: bin
@@ -424,8 +733,10 @@ segments:
     name: BowlOver
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x13EFB0, c]
+      - [0x142EA0, c]
   - type: bin
     start: 0x145CA0
   - type: code
@@ -435,8 +746,11 @@ segments:
     name: GroundPound
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x146200, c]
+      - [0x146B60, c]
+      - [0x148840, c]
   - type: bin
     start: 0x149C40
   - type: code
@@ -446,6 +760,7 @@ segments:
     name: BalloonBurst
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x149E80, c]
   - type: bin
@@ -457,8 +772,10 @@ segments:
     name: CoinBlockBlitz
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x14E940, c]
+      - [0x150E30, c]
   - type: bin
     start: 0x152B20
   - type: code
@@ -468,8 +785,10 @@ segments:
     name: CoinBlockBash
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x152BE0, c]
+      - [0x15AC50, c]
   - type: bin
     start: 0x15E120
   - type: code
@@ -479,6 +798,7 @@ segments:
     name: SkateBoardSkamper
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x15EAF0, c]
   - type: bin
@@ -490,8 +810,11 @@ segments:
     name: BoxMountainMayhem
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x166220, c]
+      - [0x166D50, c]
+      - [0x168CA0, c]
   - type: bin
     start: 0x16BC00
   - type: code
@@ -501,8 +824,12 @@ segments:
     name: PlatformPeril
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x16BD20, c]
+      - [0x16C6A0, c]
+      - [0x170470, c]
+      - [0x172490, c]
   - type: bin
     start: 0x1724D0
   - type: code
@@ -512,8 +839,10 @@ segments:
     name: TeeteringTowers
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1738E0, c]
+      - [0x176130, c]
   - type: bin
     start: 0x177C30
   - type: code
@@ -523,8 +852,10 @@ segments:
     name: MushroomMixup
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1784E0, c]
+      - [0x17BDC0, c]
   - type: bin
     start: 0x17E600
   - type: code
@@ -534,6 +865,7 @@ segments:
     name: HammerDrop
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x17E710, c]
   - type: bin
@@ -545,8 +877,11 @@ segments:
     name: GrabBag
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1837D0, c]
+      - [0x184450, c]
+      - [0x184870, c]
   - type: bin
     start: 0x188280
   - type: code
@@ -556,6 +891,7 @@ segments:
     name: BobsledRun
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x188410, c]
   - type: bin
@@ -567,8 +903,10 @@ segments:
     name: BumperBalls
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x191700, c]
+      - [0x196300, c]
   - type: bin
     start: 0x197C50
   - type: code
@@ -578,8 +916,12 @@ segments:
     name: TightropeTreachery
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x197E20, c]
+      - [0x19A360, c]
+      - [0x19ACC0, c]
+      - [0x19D510, c]
   - type: bin
     start: 0x19FAF0
   - type: code
@@ -589,8 +931,11 @@ segments:
     name: KnockBlockTower
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x19FEE0, c]
+      - [0x1A2E40, c]
+      - [0x1A42B0, c]
   - type: bin
     start: 0x1A4E00
   - type: code
@@ -600,6 +945,7 @@ segments:
     name: TipsyTourney
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1A4EB0, c]
   - type: bin
@@ -611,8 +957,11 @@ segments:
     name: BombsAway
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1AA2A0, c]
+      - [0x1AF980, c]
+      - [0x1B02A0, c]
   - type: bin
     start: 0x1B3730
   - type: code
@@ -622,8 +971,11 @@ segments:
     name: CraneGame
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1B3E00, c]
+      - [0x1B9050, c]
+      - [0x1BAA60, c]
   - type: bin
     start: 0x1BCD20
   - type: code
@@ -633,6 +985,7 @@ segments:
     name: FlowerShower
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1BD640, c]
   - type: bin
@@ -644,6 +997,7 @@ segments:
     name: SlotCarDerby
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1C1EB0, c]
   - type: bin
@@ -655,8 +1009,11 @@ segments:
     name: MarioBandstand
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1CCCF0, c]
+      - [0x1CD680, c]
+      - [0x1D3040, c]
   - type: bin
     start: 0x1D3300
   - type: code
@@ -666,8 +1023,10 @@ segments:
     name: DesertDash
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1D3990, c]
+      - [0x1D6E30, c]
   - type: bin
     start: 0x1D93B0
   - type: code
@@ -677,6 +1036,7 @@ segments:
     name: ShyGuySays
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1D9690, c]
   - type: bin
@@ -688,8 +1048,10 @@ segments:
     name: LimboDance
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1E0A30, c]
+      - [0x1E4480, c]
   - type: bin
     start: 0x1E8DD0
   - type: code
@@ -699,6 +1061,7 @@ segments:
     name: name_2A
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1E9440, c]
   - type: bin
@@ -710,8 +1073,10 @@ segments:
     name: CastAways
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1F0DA0, c]
+      - [0x1F5700, c]
     #  - [0x1F60F0, rodata, 1F0DA0] #800FB930
   - type: bin
     start: 0x1F60F0
@@ -722,6 +1087,7 @@ segments:
     name: name_2C
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1F62C0, c]
       - [0x1FDF10, c]
@@ -735,6 +1101,7 @@ segments:
     name: RunningOfTheBulb
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x1FF1E0, c]
       - [0x206C90, c]
@@ -747,6 +1114,7 @@ segments:
     name: HotRopeJump
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x207040, c]
   - type: bin
@@ -758,8 +1126,10 @@ segments:
     name: HandcarHavoc
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x20F570, c]
+      - [0x216140, c]
   - type: bin
     start: 0x218330
   - type: code
@@ -769,8 +1139,10 @@ segments:
     name: DeepSeaDivers
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x218510, c]
+      - [0x21FAD0, c]
   - type: bin
     start: 0x221890
   - type: code
@@ -780,8 +1152,10 @@ segments:
     name: PiranhasPursuit
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x222320, c]
+      - [0x225DF0, c]
   - type: bin
     start: 0x22BF30
   - type: code
@@ -791,8 +1165,12 @@ segments:
     name: TugOWar
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x22C9E0, c]
+      - [0x22D5F0, c]
+      - [0x231180, c]
+      - [0x231D40, c]
   - type: bin
     start: 0x233EE0
   - type: code
@@ -802,8 +1180,10 @@ segments:
     name: PaddleBattle
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2341E0, c]
+      - [0x234F80, c]
   - type: bin
     start: 0x23BDF0
   - type: code
@@ -813,8 +1193,10 @@ segments:
     name: BumperBallMaze
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x23CF40, c]
+      - [0x240010, c]
   - type: bin
     start: 0x241460
   - type: code
@@ -824,6 +1206,7 @@ segments:
     name: name_35
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x241740, c]
       - [0x241770, c]
@@ -836,6 +1219,7 @@ segments:
     name: DKsJungleAdventure
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2418A0, c]
       - [0x2418D0, c]
@@ -848,6 +1232,7 @@ segments:
     name: PeachsBirthdayCake
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2455C0, c]
       - [0x2455F0, c]
@@ -860,8 +1245,10 @@ segments:
     name: YoshisTropicalIsland
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x246DF0, c]
+      - [0x246E20, c]
   - type: bin
     start: 0x248820
   - type: code
@@ -871,8 +1258,10 @@ segments:
     name: WariosBattleCanyon
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x248F00, c]
+      - [0x248F30, c]
   - type: bin
     start: 0x24C0D0
   - type: code
@@ -882,8 +1271,10 @@ segments:
     name: LuigisEngineRoom
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x24C390, c]
+      - [0x24C3C0, c]
   - type: bin
     start: 0x24F280
   - type: code
@@ -893,6 +1284,7 @@ segments:
     name: MariosRainbowCastle
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x24FA80, c]
       - [0x24FAB0, c]
@@ -905,8 +1297,10 @@ segments:
     name: BowsersMagmaMountain
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2518D0, c]
+      - [0x251900, c]
   - type: bin
     start: 0x253A50
   - type: code
@@ -916,6 +1310,7 @@ segments:
     name: EternalStar
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x254450, c]
       - [0x254480, c]
@@ -928,6 +1323,7 @@ segments:
     name: FirstMap
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x256FF0, c]
       - [0x257020, c]
@@ -940,6 +1336,7 @@ segments:
     name: Last5Turns
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2592A0, c]
       - [0x259DD0, data] #800F7110
@@ -951,6 +1348,7 @@ segments:
     name: ResultsEternalStar
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x259EB0, c]
   - type: bin
@@ -962,8 +1360,17 @@ segments:
     name: YoshisTropicalIslandEndingScene
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x25FC70, c]
+      - [0x2603D0, c]
+      - [0x262590, c]
+      - [0x2643A0, c]
+      - [0x266C80, c]
+      - [0x26BA10, c]
+      - [0x26E620, c]
+      - [0x2721F0, c]
+      - [0x275330, c]
   - type: bin
     start: 0x277320
   - type: code
@@ -973,6 +1380,7 @@ segments:
     name: UnknownEndGameBonuses0
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x278ED0, c]
   - type: bin
@@ -984,6 +1392,7 @@ segments:
     name: UnknownEndGameBonuses1
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x27CB30, c]
   - type: bin
@@ -995,6 +1404,7 @@ segments:
     name: UnknownStarPurchaseScene0
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x280C80, c]
   - type: bin
@@ -1006,6 +1416,7 @@ segments:
     name: UnknownBowserScene0
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x281D40, c]
   - type: bin
@@ -1017,6 +1428,7 @@ segments:
     name: BowserSpaceEvent
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x282820, c]
       - [0x285110, .data, 282820] #800F8ED0
@@ -1027,6 +1439,7 @@ segments:
     name: name_47
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x285230, c]
   - type: bin
@@ -1038,6 +1451,7 @@ segments:
     name: BowserVisitDKBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x285B70, c]
       - [0x286650, .data, 285B70] #800F70C0
@@ -1049,6 +1463,7 @@ segments:
     name: BowserVisitPeachBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x286700, c]
       - [0x2871F0, .data, 286700] #800F70D0
@@ -1060,6 +1475,7 @@ segments:
     name: GoombaCoinStealPeachBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2872A0, c]
   - type: bin
@@ -1071,6 +1487,7 @@ segments:
     name: FlowerLotteryPeachBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2888A0, c]
   - type: bin
@@ -1082,6 +1499,7 @@ segments:
     name: PiranhaPlantStarStealPeachBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x289BA0, c]
       # - [0x289BB0, .bss, 289BA0]
@@ -1093,6 +1511,7 @@ segments:
     name: ThowmpTollYoshiBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x28ABA0, c]
   - type: bin
@@ -1104,6 +1523,7 @@ segments:
     name: BowserToadSwapPlacesYoshiBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x28BC70, c]
       - [0x28CED0, .data, 28BC70]
@@ -1115,6 +1535,7 @@ segments:
     name: BowserVisitYoshiBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x28CFF0, c]
   - type: bin
@@ -1126,6 +1547,7 @@ segments:
     name: LoadCannonWarioBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x28E030, c]
       - [0x28E570, .data, 28E030] #800F6B20
@@ -1136,6 +1558,7 @@ segments:
     name: ChangeCannonTargetWarioBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x28E630, c]
   - type: bin
@@ -1147,6 +1570,7 @@ segments:
     name: FlyGuyWarioBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x28ECA0, c]
   - type: bin
@@ -1158,6 +1582,7 @@ segments:
     name: BowserVisitWarioBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2908F0, c]
       - [0x291280, .data, 2908F0] #800F6F70
@@ -1169,6 +1594,7 @@ segments:
     name: BowserVisitLuigiBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x291360, c]
   - type: bin
@@ -1180,6 +1606,7 @@ segments:
     name: MoveDoorsLuigiBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x292020, c]
   - type: bin
@@ -1191,6 +1618,7 @@ segments:
     name: BowserToadSwapPlacesMarioBoard
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x293260, c]
       - [0x293A30, .data, 293260] #800F6DB0
@@ -1202,6 +1630,7 @@ segments:
     name: name_57
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x293A70, c]
   - type: bin
@@ -1223,6 +1652,7 @@ segments:
     name: BowserVisitMagmaMountain
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x295450, c]
   - type: bin
@@ -1234,6 +1664,7 @@ segments:
     name: ShortcutRouletteMagmaMountain
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x295E40, c]
       - [0x296A60, .data, 295E40]
@@ -1244,6 +1675,7 @@ segments:
     name: BowservisitMagmaMountain
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x296B70, c]
       - [0x297B20, .data, 296B70] #800F7590
@@ -1255,6 +1687,7 @@ segments:
     name: HappeningSpaceEternalStar
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x297BE0, c]
       - [0x297F90, .data, 297BE0]
@@ -1265,6 +1698,7 @@ segments:
     name: BowserVisitEternalStar
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x297FB0, c]
       - [0x298A30, .data, 297FB0]
@@ -1276,10 +1710,11 @@ segments:
     name: StarVisitEternalStar
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x298AE0, c]
-  - type: bin
-    start: 0x29A2C0
+      - [0x29A2C0, .data, 298AE0]
+      - [0x29A3D0, .rodata, 298AE0]
   - type: code
     start: 0x29A400
     vram: 0x800F65E0
@@ -1287,10 +1722,11 @@ segments:
     name: KoopaVisitEternalStar
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x29A400, c]
-  - type: bin
-    start: 0x29AA80
+      - [0x29AA80, .data, 29A400]
+      - [0x29AB20, .rodata, 29A400]
   - type: code
     start: 0x29AB30
     vram: 0x800F65E0
@@ -1298,6 +1734,7 @@ segments:
     name: name_60
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
     - [0x29AB30, c]
     #- [0x29B280, .rodata, 29AB30]
@@ -1308,6 +1745,7 @@ segments:
     name: OpeningScene
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x29B410, c]
   - type: bin
@@ -1319,10 +1757,20 @@ segments:
     name: BoardIntro
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2A2500, c]
-  - type: bin
-    start: 0x2A8C50
+      - [0x2A51E0, c]
+      - [0x2A5420, c]
+      - [0x2A5840, c]
+      - [0x2A5E50, c]
+      - [0x2A6500, c]
+      - [0x2A6EA0, c]
+      - [0x2A74F0, c]
+      - [0x2A76E0, c]
+      - [0x2A8C50, data, 2A2500]
+      # - [0x2A98B0, rodata, 2A2500]
+      # - [0x2A8C50, bin]
   - type: code
     start: 0x2A9970
     vram: 0x800F65E0
@@ -1330,8 +1778,10 @@ segments:
     name: StaffScene
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2A9970, c]
+      - [0x2A9CA0, c]
   - type: bin
     start: 0x2B0670
   - type: code
@@ -1341,6 +1791,7 @@ segments:
     name: ResultsEternalStar2
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2B1670, c]
   - type: bin
@@ -1352,6 +1803,7 @@ segments:
     name: UnknownBooStealScene
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2B74A0, c]
   - type: bin
@@ -1363,8 +1815,10 @@ segments:
     name: LogosSequence
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2BA4C0, c]
+      - [0x2BA4F0, c]
   - type: bin
     start: 0x2BA9B0
   - type: code
@@ -1374,6 +1828,7 @@ segments:
     name: LogosSequenceCopy
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2BA9E0, c]
       - [0x2BAA10, c] ###800F6F54 start of data
@@ -1386,6 +1841,7 @@ segments:
     name: SaveDataCorrupted
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2BB390, c]
       - [0x2BB3C0, c]
@@ -1396,6 +1852,7 @@ segments:
     name: GameModeOverworld
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       #- [0x2BB5B0, data, 2BB5C0]
       - [0x2BB5C0, c]
@@ -1409,6 +1866,7 @@ segments:
     name: AdventureModeSetup
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2BF1A0, c]
       - [0x2BF1D0, c]
@@ -1421,6 +1879,7 @@ segments:
     name: MinigameHouse
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2CAA00, c]
   - type: bin
@@ -1432,6 +1891,7 @@ segments:
     name: MushroomShop
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2D4830, c]
   - type: bin
@@ -1443,6 +1903,7 @@ segments:
     name: MushroomBank
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2D6FC0, c]
   - type: bin
@@ -1454,6 +1915,7 @@ segments:
     name: OptionsHouse
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2D9570, c]
   - type: bin
@@ -1465,8 +1927,12 @@ segments:
     name: MinigameInstructions
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2DB2A0, c]
+      - [0x2DB2D0, c]
+      - [0x2DF200, c]
+      - [0x2E8220, c]
   - type: bin
     start: 0x2F3190
   - type: code
@@ -1476,6 +1942,7 @@ segments:
     name: TestingRoom
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2F40C0, c]
   - type: bin
@@ -1487,8 +1954,10 @@ segments:
     name: MinigameIslandOverworld
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2F6FB0, c]
+      - [0x2F6FE0, c]
   - type: bin
     start: 0x2F7060
   - type: code
@@ -1498,8 +1967,10 @@ segments:
     name: MinigameIslandOverworldCopy
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2F7080, c]
+      - [0x2F70B0, c]
   - type: bin
     start: 0x2F8B50
   - type: code
@@ -1509,8 +1980,10 @@ segments:
     name: name_73
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2F9040, c]
+      - [0x2F9070, c]
   - type: bin
     start: 0x2F95F0
   - type: code
@@ -1520,8 +1993,10 @@ segments:
     name: name_74
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2F96E0, c]
+      - [0x2F9710, c]
   - type: bin
     start: 0x2F9FE0
   - type: code
@@ -1531,8 +2006,10 @@ segments:
     name: name_75
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2FA120, c]
+      - [0x2FA150, c]
   - type: bin
     start: 0x2FA760
   - type: code
@@ -1542,8 +2019,10 @@ segments:
     name: name_76
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2FA8A0, c]
+      - [0x2FA8D0, c]
   - type: bin
     start: 0x2FAC80
   - type: code
@@ -1553,6 +2032,7 @@ segments:
     name: MinigameIslandFinish
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2FADB0, c]
   - type: bin
@@ -1564,6 +2044,7 @@ segments:
     name: MinigameIslandStart
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x2FD940, c]
   - type: bin
@@ -1575,6 +2056,7 @@ segments:
     name: name_79
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x3005B0, c]
   - type: bin
@@ -1586,6 +2068,7 @@ segments:
     name: DebugRandomPlay
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x3014C0, c]
   - type: bin
@@ -1597,8 +2080,11 @@ segments:
     name: MinigameStadiumMinigameResultsScreen
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x303E70, c]
+      - [0x306290, c]
+      - [0x306BA0, c]
   - type: bin
     start: 0x308890
   - type: code
@@ -1608,6 +2094,7 @@ segments:
     name: UnknownResultsScreen
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x308A50, c]
   - type: bin
@@ -1619,6 +2106,7 @@ segments:
     name: MinigameIslandMISS
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x30C540, c]
   - type: bin
@@ -1630,6 +2118,7 @@ segments:
     name: DebugSequentialPlay
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x30F1B0, c]
   - type: bin
@@ -1641,6 +2130,7 @@ segments:
     name: MinigameStadiumStart
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x311E90, c]
       - [0x311EC0, c]
@@ -1653,6 +2143,7 @@ segments:
     name: MinigameStadiumResults
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x312850, c]
   - type: bin
@@ -1664,6 +2155,7 @@ segments:
     name: PressStartScreen
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x314950, c]
   - type: bin
@@ -1675,6 +2167,7 @@ segments:
     name: MiniGameStadiumStartCopy
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x316440, c]
   - type: bin
@@ -1686,6 +2179,7 @@ segments:
     name: DebugMinigameMenu
     overlay: True
     exclusive_ram_id: minigame
+    symbol_name_format: $VRAM_$ROM
     subsegments:
       - [0x317980, c]
   - type: bin
@@ -1694,4 +2188,5 @@ segments:
     start: 0xFE2310
   - type: bin
     start: 0xFE24BC
-  - [0x1CED490]
+  - [0x1CED490, bin, romPadding]
+  - [0x2000000]

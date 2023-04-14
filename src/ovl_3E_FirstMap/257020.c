@@ -1,5 +1,5 @@
-#include "common.h"
-#include "firstMap.h"
+#include "process.h"
+#include "FirstMap.h"
 
 void func_800F6610_257020(void) {
     D_800ED5C2 = 8;
@@ -212,7 +212,7 @@ void func_800F6DD8_2577E8(ovl_3E_HeapStruct* arg0) {
     func_80067704(arg0->unk4);
     func_80067704(arg0->unk6);
     func_80064D38(arg0->unk0);
-    func_8003B798((ProcessHeader*)arg0); //fake, fix later
+    FreeTemp(arg0);
 }
 
 
@@ -288,8 +288,8 @@ void func_800F6FC4_2579D4(void) {
     }
 }
 
-void func_800F7090_257AA0(void) {
-    func_8005884C();
+void func_800F7090_257AA0(Vec3f* coords) {
+    func_8005884C(coords);
 }
 
 void func_800F70AC_257ABC(void) {
@@ -316,10 +316,10 @@ void func_800F73A0_257DB0(void) {
     playerMain* player = GetPlayerStruct(CURRENT_PLAYER);
     SpaceData* space = GetSpaceData(GetAbsSpaceIndexFromChainSpaceIndex(player->curChainIndex, player->curSpaceIndex));
 
-    SetPlayerLandedSpaceType(-1, space->space_type);
+    SetPlayerLandedSpaceType(-1, space->spaceType);
     func_800546B4(D_800ED5DC, player->turn_status);
 
-    switch (space->space_type) {
+    switch (space->spaceType) {
     case 1:
         ShowPlayerCoinChange(gameStatus->unk_1C, 3);
         func_80055960(gameStatus->unk_1C, 3);
@@ -464,7 +464,7 @@ s32 func_800F81F8_258C08(s32 arg0) {
 }
 
 void func_800F83D4_258DE4(void) {
-    u8 sp10;
+    Vec2f coords;
     s32 playerIndex;
     s32 i;
 
@@ -482,8 +482,8 @@ void func_800F83D4_258DE4(void) {
         for (i = 0; i < 4; i++) {
             if (D_800EC6EA[i] & 0x1000) {
                 func_80041F84(playerIndex);
-                func_8004B6D8(&sp10);
-                func_8004B61C(&sp10);
+                func_8004B6D8(&coords);
+                func_8004B61C(&coords);
                 D_800ECC22 = 1;
                 func_8005FD7C();
                 D_800F384E = 1;

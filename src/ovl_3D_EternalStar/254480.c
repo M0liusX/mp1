@@ -1,8 +1,7 @@
-#include "common.h"
-#include "eternalStar.h"
+#include "EternalStar.h"
 
 
-f32 D_800F8BB0_256A20[] = {0.0f, 0.0f, 320.0f, 240.0f};
+Vec4f D_800F8BB0_256A20 = {0.0f, 0.0f, 320.0f, 240.0f};
 s16 D_800F8BC0_256A30[] = {0x0046, 0x0047, 0x0048, 0x0049, 0x004A, 0x004B, 0x004C};
 s16 D_800F8BD0_256A40[] = {0x0055, 0x0054, 0x0053, 0x0052, 0x0051, 0x0050, 0x004F};
 s16 D_800F8BE0_256A50[] = {0x0001, 0x0009, 0x0008, 0x0007, 0x0006, 0x0005, 0x0004};
@@ -287,7 +286,7 @@ void func_800F6AA0_254910(ProcessHeader* arg0) {
         DestroyObject(arg0->prev);
         EndProcess(arg0->process);
         func_80072080(arg0->unk_08);
-        func_8003B798(arg0);
+        FreeTemp(arg0);
     }
 }
 
@@ -934,7 +933,7 @@ void func_800F8240_2560B0(void) {
     SleepProcess(30);
     SetBoardFeatureFlag(0x4F);
     func_800587BC(0x5D, 0, 3, 1);
-    func_8004CB20(1);
+    SetEventReturnFlag(1);
     EndProcess(NULL);
 }
 
@@ -1006,7 +1005,7 @@ void func_800F8298_256108(void) {
 void func_800F8514_256384(void) {
     SetBoardFeatureFlag(0x50);
     func_800587EC(0x5C, 0, 4);
-    func_8004CB20(1);
+    SetEventReturnFlag(1);
     SetPlayerOntoChain(0, 0x12, 1);
     SetPlayerOntoChain(1, 0x12, 1);
     SetPlayerOntoChain(2, 0x12, 1);
@@ -1090,9 +1089,11 @@ void func_800F87E4_256654(EventTableUnkStruct* arg0) {
     
     if (PlayerIsCPU(-1) != 0) {
         tempVar = RunDecisionTree(arg0->decisionTree);
+
         for (i = 0; i < tempVar; i++) {
             func_8003BE84(temp_s2, -2);
         }
+        
         func_8003BE84(temp_s2, -4);
     }
     

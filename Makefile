@@ -84,11 +84,11 @@ ENDLINE := \n'
 ### Compiler Options ###
 
 ASFLAGS        := -G 0 -I include -mips3 -mabi=32
-CFLAGS         := -G0 -mips3 -mgp32 -mfp32 -Wa,--vr4300mul-off
-CPPFLAGS       := -I include -I $(BUILD_DIR)/include -I src -DF3DEX_GBI_2
-LDFLAGS        := -T symbol_addrs.txt -T undefined_syms.txt -T undefined_funcs.txt -T undefined_funcs_auto.txt -T undefined_syms_auto.txt -T $(LD_SCRIPT) -Map $(LD_MAP) --no-check-sections
-CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unused-parameter -Wno-unused-variable -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast -m32
-CFLAGS_CHECK   := -fsyntax-only -fsigned-char -nostdinc -fno-builtin -D CC_CHECK -std=gnu90 $(CHECK_WARNINGS)
+CFLAGS         := -G0 -mips3 -mgp32 -mfp32 -Wa,--vr4300mul-off -D_LANGUAGE_C 
+CPPFLAGS       := -I. -I include -I include/PR -I include/engine -I include/gcc -I $(BUILD_DIR)/include -I src -DF3DEX_GBI_2
+LDFLAGS        := -T undefined_syms.txt -T undefined_funcs.txt -T undefined_funcs_auto.txt -T undefined_syms_auto.txt -T $(LD_SCRIPT) -Map $(LD_MAP) --no-check-sections
+CHECK_WARNINGS := -Wall -Wextra -Wunused-but-set-variable -Wno-format-security -Wno-unused-parameter -Wno-sign-compare -Wno-unused-variable -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast -m32
+CFLAGS_CHECK   := -fsyntax-only -fsigned-char -nostdinc -fno-builtin -D CC_CHECK -D _LANGUAGE_C -std=gnu90 $(CHECK_WARNINGS)
 
 ifneq ($(CHECK),1)
 CFLAGS_CHECK += -w
@@ -132,6 +132,19 @@ test: $(ROM)
 	$(V)$(EMULATOR) $<
 
 # Flags for individual files. TODO: move these to a common directory and make this a directory thing instead
+build/src/lib/%.c.o: OPTFLAGS = -O3 -funsigned-char
+build/src/lib/%.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_MIPS_SZLONG=32 -D_LANGUAGE_C -DF3DEX_GBI
+build/src/lib/%.c.o: CPPFLAGS = -I include -I include/PR -I include/gcc -I $(BUILD_DIR)/include -I src -DNDEBUG -D_MIPS_SZLONG=32 -DF3DEX_GBI_2
+
+# Special flags since these functions have a mono sound patch.
+build/src/lib/2.0I/audio/synsetpan.c.o: OPTFLAGS = -O0
+build/src/lib/2.0I/audio/synstartvoiceparam.c.o: OPTFLAGS = -O0
+
+build/src/engine/math.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+
+# mul nops included in the 48D90.c (Maybe only one func uses --vr4300mul-off)
+build/src/48D90.c.o: CFLAGS = -G0 -mips3 -mgp32 -mfp32 -D_LANGUAGE_C
+
 build/src/ABCD0.c.o: OPTFLAGS = -O0
 build/src/ACA90.c.o: OPTFLAGS = -O0
 build/src/ACCB0.c.o: OPTFLAGS = -O0
@@ -165,6 +178,9 @@ build/src/89EA0.c.o: OPTFLAGS = -O0
 build/src/A2080.c.o: OPTFLAGS = -O0
 build/src/A21C0.c.o: OPTFLAGS = -O0
 build/src/A3370.c.o: OPTFLAGS = -O0
+build/src/A27D0.c.o: OPTFLAGS = -O0
+build/src/95F40.c.o: OPTFLAGS = -O2
+
 
 # Compile .c files with kmc gcc (use strip to fix objects so that they can be linked with modern gnu ld) 
 $(BUILD_DIR)/src/%.c.o: src/%.c
@@ -195,8 +211,6 @@ $(BUILD_DIR)/$(TARGET).elf: $(OBJECTS)
 $(ROM): $(BUILD_DIR)/$(TARGET).elf
 	@$(PRINT)$(GREEN)Creating z64: $(ENDGREEN)$(BLUE)$@$(ENDBLUE)$(ENDLINE)
 	$(V)$(OBJCOPY) $< $@ -O binary
-	$(V)$(OBJCOPY) -O binary --gap-fill 0xFF --pad-to 0x2000000 $< $@
-	@$(PRINT)$(PURPLE)objcopy gap fill 0xFF to 0x2000000$(PURPLE)$(ENDPURPLE)$(ENDLINE)
 	$(V)$(N64CKSUM) $@
 ifeq ($(COMPARE),1)
 	@$(DIFF) $(BASEROM) $(ROM) && printf "OK\n" || (echo 'The build succeeded, but did not match the base ROM. This is expected if you are making changes to the game. To skip this check, use "make COMPARE=0".' && false)

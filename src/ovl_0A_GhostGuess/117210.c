@@ -1,5 +1,4 @@
-#include "common.h"
-#include "117210.h"
+#include "GhostGuess.h"
 
 INCLUDE_ASM(s32, "ovl_0A_GhostGuess/117210", func_800F65E0_117210);
 
@@ -72,38 +71,21 @@ INCLUDE_ASM(s32, "ovl_0A_GhostGuess/117210", func_800FA764_11B394);
 void func_800FB21C_11BE4C(void) {
 }
 
-INCLUDE_ASM(s32, "ovl_0A_GhostGuess/117210", func_800FB224_11BE54);
+void func_800FB224_11BE54(unkObjectStruct* arg0, u32 arg1) { //construct pointer into u8s in struct (why?)
+    arg0->unk_4C = arg1 >> 24;
+    arg0->unk_4D = arg1 >> 16;
+    arg0->unk_4E = arg1 >> 8;
+    arg0->unk_4F = arg1;
+}
 
-INCLUDE_ASM(s32, "ovl_0A_GhostGuess/117210", func_800FB244_11BE74);
+s32 func_800FB244_11BE74(unkObjectStruct* arg0) { //deconstruct u8s in struct into a pointer (again why?)
+    return  (arg0->unk_4C << 24) |
+            (arg0->unk_4D << 16) |
+            (arg0->unk_4E << 8) |
+            arg0->unk_4F;
+}
 
 INCLUDE_ASM(s32, "ovl_0A_GhostGuess/117210", func_800FB270_11BEA0);
 
 INCLUDE_ASM(s32, "ovl_0A_GhostGuess/117210", func_800FB2D0_11BF00);
 
-INCLUDE_ASM(s32, "ovl_0A_GhostGuess/117210", func_800FB3B0_11BFE0);
-
-void func_800FB448_11C078(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, u16 arg7) {
-    D_800FC324 = arg0;
-    D_800FC2FC.x = arg1;
-    D_800FC2FC.y = arg2;
-    D_800FC2FC.z = arg3;
-    D_800FC314.x = arg4;
-    D_800FC314.y = arg5;
-    D_800FC314.z = arg6;
-    if (D_800FC328 == 0) {
-        D_800FC32A = arg7;
-        D_800FC328 = arg7;
-    }
-}
-
-void func_800FB4B0_11C0E0(void) {
-    D_800FC320 = D_800FC324;
-    D_800FC308.x = D_800FC314.x;
-    D_800FC308.y = D_800FC314.y;
-    D_800FC308.z = D_800FC314.z;
-    D_800FC2F0.x = D_800FC2FC.x;
-    D_800FC2F0.y = D_800FC2FC.y;
-    D_800FC2F0.z = D_800FC2FC.z;
-}
-
-INCLUDE_ASM(s32, "ovl_0A_GhostGuess/117210", func_800FB514_11C144);

@@ -119,3 +119,40 @@ D_800FF0AC_ovl05 = 0x800FF0AC;
 
 D_800C8330_C8F30 = 0x800C8330;
 D_800FD6E0_1D3DF0 = 0x800FD6E0;
+
+
+frameBufferPool = 0x800D5FE8;
+frameBufferCount = 0x800D5FEC;
+frameBufferSegmentID = 0x800D5FEE;
+
+swapChainTask = 0x800D5ED0;
+swapChainThread = 0x800D1D20;
+swapChainStack = 0x800D26D0;
+gMesgRingBuffer = 0x800ECE20;
+ringBufferIndex = 0x800ECB2E;
+
+gThreadOutStackSize = 0x800ECB34;
+gThreadYieldStack = 0x800F09F0;
+gThreadOutStack = 0x800F2CBC;
+
+gUCodeAddresses = 0x800F317C;
+
+rspBootAddressStart = 0x800B1760;
+rspBootAddressEnd = 0x800B1830;
+gTaskDataPointers = 0x800ED398;
+
+nextFrameBuffer = 0x800F3838;
+currFrameBuffer = 0x800ECB1C;
+
+gSwapChainMesgQueue = 0x800D5F18;
+gSwapChainInitMesg = 0x800D5F30;
+gSwapChainMesgTotal = 0x800ED3C2;
+
+gMesgQueue = 0x800D5FB0;
+gMesgQueueInitMesg = 0x800D5FC8;
+D_800FDA60_ovl62 = 0x800FDA60;
+D_800FD59C_ovl62 = 0x800FD59C;
+
+__Dom2SpeedParam = 0x800ED4B8;
+__Dom1SpeedParam = 0x800F3108;
+D_800CB2A4 = 0x800CB2A4;

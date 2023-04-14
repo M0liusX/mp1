@@ -1,4 +1,5 @@
 #include "common.h"
+#include "process.h"
 
 extern u8 D_800C53E0[]; // { 0, 1, 2 }
 extern u8 D_800C53E4[]; // { 1, 2, 3 }
@@ -66,7 +67,7 @@ u32 PlayerHasCoins(s32 index, s32 count) {
 /*
  * Updates the given player's current animation.
 */
-void func_80052BE8(s32 index, s16 animation, s32 unk) {
+void SetPlayerAnimation(s32 index, s16 animation, s32 unk) {
     playerMain* player = GetPlayerStruct(index);
     if (player == GetPlayerStruct(-1)) {
         func_8003E81C(player->playerObj, animation, unk);

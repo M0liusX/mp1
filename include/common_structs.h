@@ -2,6 +2,7 @@
 #define _COMMON_STRUCTS_
 
 #include "types.h"
+#include "math.h"
 
 typedef struct Vec2f {
                f32 x;
@@ -12,6 +13,10 @@ typedef struct Vec2s {
                s16 x;
                s16 y;
 } Vec2s;
+
+typedef struct {
+    u16 x, y;
+} Vec2hu;
 
 typedef struct Vec2w {
                s32 x;
@@ -179,6 +184,8 @@ typedef struct unkObjectStruct2 {
 /* 0x4C */ u8  unk_4E;
 /* 0x4C */ u8  unk_4F;
 /* 0x50 */ volatile s32 unk_50;
+/* 0x54 */ char unk_54[0x90];
+/* 0xE4 */ unkObjectStruct* unk_E4;
 } unkObjectStruct2; //sizeof 0x54
 
 typedef struct jump_buf
@@ -363,34 +370,6 @@ typedef struct GameStatus {
 /* 0x1C */ s16 unk_1C;
 } GameStatus;
 
-typedef struct EventListEntry {
-    s16 activation_type;
-    s16 execution_type;
-    void (*event_fn)();
-} EventListEntry;
-
-typedef struct EventTableEntry {
-    s16 space_index;
-    EventListEntry* event_list;
-} EventTableEntry;
-
-typedef struct SpaceData {
-/* 0x00 */ s8 unk_00;
-/* 0x01 */ u8 space_type; // enum board_space_type
-/* 0x02 */ s16 unk_02;
-/* 0x04 */ Vec3f coords;
-/* 0x10 */ f32 sx;
-/* 0x14 */ f32 sy;
-/* 0x18*/  f32 sz;
-/* 0x1C */ EventListEntry* event_list;
-} SpaceData;
-
-typedef struct ChainData {
-    u16 len;
-    s16* space_indices;
-} ChainData;
-
-
 typedef struct mpSource_object_indirect2 {
     s16 unk0;
 } mpSource_object_indirect2;
@@ -474,12 +453,6 @@ typedef struct unkStructTest {
 /* 0x1E */ s16 unk_1C;
 } unkStructTest;
 
-typedef struct unkGlobalStruct {
-    f32 unk_00;
-    s32 unk_04;
-    f32 unk_08;
-} unkGlobalStruct;
-
 typedef struct unk_Struct02 {
     char unk_00[0x0A];
     s16 unk_0A;
@@ -503,8 +476,8 @@ typedef struct unk_ovl_2D_struct { //actually global??
     /* 0x54 */ char unk_54[0x18];
     /* 0x6C */ s32 unk_6C;
     /* 0x70 */ char pad70[0xC];
-    /* 0x7C */ f32 unk7C;
-    /* 0x7C */ char pad7C[0x40];
+    /* 0x7C */ Mat4 unk7C; // Transformation Matrix
+    /* 0x7C */ char padBC[0x4];
 } unk_ovl_2D_struct;
 
 typedef struct SubTextWindow {
@@ -582,11 +555,11 @@ typedef struct DecisionTreeNonLeafNode {
     u32 type;
     union {
         void (*func) ();
-        u32 unsigned32;
+        u32 data;
     } node_data1;
     union {
-        u32 unsigned32;
-        s32 *next_grouper_ptr;
+        u32 data;
+        s32 *node_data;
     } node_data2;
 } DecisionTreeNonLeafNode;
 
