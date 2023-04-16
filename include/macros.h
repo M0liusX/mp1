@@ -16,6 +16,9 @@
 #ifndef MIN
 #define MIN(a, b)				((a) < (b) ? (a) : (b))
 #endif
+#ifndef MAX
+#define MAX(a, b)				((a) > (b) ? (a) : (b))
+#endif
 
 #ifndef VEC3F_COPY_OBJ
 #define VEC3F_COPY_TO_OBJ(obj, vec3f) \
