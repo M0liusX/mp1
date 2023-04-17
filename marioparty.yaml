@@ -2197,19 +2197,99 @@ segments:
     # Audio Data
   - {type: bin, start: 0x1539e40, name: "../assets/audio/soundbank1.bnk"} # Instrument meta files
   - {type: bin, start: 0x1563b68, name: "../assets/audio/wavetable1.tbl"} # raw/vadpcm audio wave data
-  - {type: bin, start: 0x17473b0, name: "../assets/audio/sequencebnk1.tbl"} # sbk file containing seq files below
-  # - {type: bin, start: 0x17473b0, name: "../assets/midi/twobeeps.seq"} # Test Sound: Two sinusoid wave beeps at different tones.
-  # - type: bin
-  #   start: 0x1747420
-  # - {type: bin, start: 0x174CF30, name: "../assets/midi/tropical.seq"} # Yoshi Board BGM
-  # - type: bin
-  #   start: 0x174ED10
-  # - {type: bin, start: 0x1751958, name: "../assets/midi/rainbow.seq"} # Mario Board BGM
-  # - type: bin
-  #   start: 0x1753118
+  #- {type: bin, start: 0x17473b0, name: "../assets/audio/sequencebnk1.tbl"} # sbk file containing seq files below
+  - {type: bin, start: 0x17473B0, name: "../assets/audio/seq/17473B0"}  # |Two Beeps
+  - {type: bin, start: 0x1747420, name: "../assets/audio/seq/1747420"}  # |Mario Party Theme
+  - {type: bin, start: 0x1747490, name: "../assets/audio/seq/1747490"}  # |Peaceful Mushroom Village
+  - {type: bin, start: 0x1747C40, name: "../assets/audio/seq/1747C40"}  # |Unkown
+  - {type: bin, start: 0x1748528, name: "../assets/audio/seq/1748528"}  # |Unkown
+  - {type: bin, start: 0x1748B50, name: "../assets/audio/seq/1748B50"}  # |Option House Theme
+  - {type: bin, start: 0x1749240, name: "../assets/audio/seq/1749240"}  # |Opening // Mushroom Shop Theme??
+  - {type: bin, start: 0x174A068, name: "../assets/audio/seq/174A068"}  # |Mini-Game House Theme
+  - {type: bin, start: 0x174A6C8, name: "../assets/audio/seq/174A6C8"}  # |DK's Jungle Adventure Theme
+  - {type: bin, start: 0x174B7C0, name: "../assets/audio/seq/174B7C0"}  # |Peach's Birthday Cake Theme
+  - {type: bin, start: 0x174CF30, name: "../assets/audio/seq/174CF30"}  # |Yoshi's Tropical Island Theme
+  - {type: bin, start: 0x174ED10, name: "../assets/audio/seq/174ED10"}  # |Wario's Battle Canyon Theme
+  - {type: bin, start: 0x1750390, name: "../assets/audio/seq/1750390"}  # |Luigi's Engine Room Theme
+  - {type: bin, start: 0x1751958, name: "../assets/audio/seq/1751958"}  # |Mario's Rainbow Castle Theme
+  - {type: bin, start: 0x1753118, name: "../assets/audio/seq/1753118"}  # |Magma Mountain Theme
+  - {type: bin, start: 0x1754540, name: "../assets/audio/seq/1754540"}  # |Eternal Star Theme
+  - {type: bin, start: 0x1756EB0, name: "../assets/audio/seq/1756EB0"}  # |Outcome of Adventure
+  - {type: bin, start: 0x1757E30, name: "../assets/audio/seq/1757E30"}  # |Start of Adventure
+  - {type: bin, start: 0x1758A38, name: "../assets/audio/seq/1758A38"}  # |Bowser Meeting
+  - {type: bin, start: 0x1759D30, name: "../assets/audio/seq/1759D30"}  # |Last 5 Turns
+  - {type: bin, start: 0x175AA98, name: "../assets/audio/seq/175AA98"}  # |Two Beeps
+  - {type: bin, start: 0x175AB08, name: "../assets/audio/seq/175AB08"}  # |Play A Mini-Game
+  - {type: bin, start: 0x175B4D8, name: "../assets/audio/seq/175B4D8"}  # |Results
+  - {type: bin, start: 0x175B6A0, name: "../assets/audio/seq/175B6A0"}  # |Mario's Bandstand Theme
+  - {type: bin, start: 0x175BAE8, name: "../assets/audio/seq/175BAE8"}  # |Move to the Mambo
+  - {type: bin, start: 0x175D1C8, name: "../assets/audio/seq/175D1C8"}  # |Wide, Wide Ocean
+  - {type: bin, start: 0x175EE30, name: "../assets/audio/seq/175EE30"}  # |Mushroom Forest
+  - {type: bin, start: 0x1760758, name: "../assets/audio/seq/1760758"}  # |Ducking and Dodging
+  - {type: bin, start: 0x1761CC8, name: "../assets/audio/seq/1761CC8"}  # |Full of Danger
+  - {type: bin, start: 0x1763098, name: "../assets/audio/seq/1763098"}  # |Coins of the World
+  - {type: bin, start: 0x1764458, name: "../assets/audio/seq/1764458"}  # |Taking Coins
+  - {type: bin, start: 0x1764660, name: "../assets/audio/seq/1764660"}  # |The Room Underground
+  - {type: bin, start: 0x1765100, name: "../assets/audio/seq/1765100"}  # |Slowly, Slowly
+  - {type: bin, start: 0x17656D0, name: "../assets/audio/seq/17656D0"}  # |Dodging Danger
+  - {type: bin, start: 0x17666E8, name: "../assets/audio/seq/17666E8"}  # |Let's Limbo!
+  - {type: bin, start: 0x1767328, name: "../assets/audio/seq/1767328"}  # |Let's Go Lightly
+  - {type: bin, start: 0x1768C78, name: "../assets/audio/seq/1768C78"}  # |Chance Time
+  - {type: bin, start: 0x1769DB0, name: "../assets/audio/seq/1769DB0"}  # |Can It Be Done
+  - {type: bin, start: 0x176A430, name: "../assets/audio/seq/176A430"}  # |Faster Than All
+  - {type: bin, start: 0x176B798, name: "../assets/audio/seq/176B798"}  # |Saving Courage
+  - {type: bin, start: 0x176CBB8, name: "../assets/audio/seq/176CBB8"}  # |Two Beeps
+  - {type: bin, start: 0x176CC28, name: "../assets/audio/seq/176CC28"}  # |Two Beeps
+  - {type: bin, start: 0x176CC98, name: "../assets/audio/seq/176CC98"}  # |Playing the Game
+  - {type: bin, start: 0x176DC88, name: "../assets/audio/seq/176DC88"}  # |Where Have The Stars Gone?
+  - {type: bin, start: 0x176E340, name: "../assets/audio/seq/176E340"}  # |Two Beeps
+  - {type: bin, start: 0x176E3B0, name: "../assets/audio/seq/176E3B0"}  # |Mario Bandstand
+  - {type: bin, start: 0x176E7E0, name: "../assets/audio/seq/176E7E0"}  # |Mario Bandstand
+  - {type: bin, start: 0x176EBE8, name: "../assets/audio/seq/176EBE8"}  # |The Stolen Star
+  - {type: bin, start: 0x176F8B0, name: "../assets/audio/seq/176F8B0"}  # |Bowser's Chance Game
+  - {type: bin, start: 0x1770100, name: "../assets/audio/seq/1770100"}  # |Waterfall?
+  - {type: bin, start: 0x1771C70, name: "../assets/audio/seq/1771C70"}  # |Mini-Game Finished
+  - {type: bin, start: 0x17720B8, name: "../assets/audio/seq/17720B8"}  # |Mini-Game Finished
+  - {type: bin, start: 0x17724F0, name: "../assets/audio/seq/17724F0"}  # |Mini-Game Abysmal Finish
+  - {type: bin, start: 0x1772B50, name: "../assets/audio/seq/1772B50"}  # |Mini-Game Finish?
+  - {type: bin, start: 0x1772F90, name: "../assets/audio/seq/1772F90"}  # |Mini-Game Finish
+  - {type: bin, start: 0x17734A8, name: "../assets/audio/seq/17734A8"}  # |Mini-Game Finish
+  - {type: bin, start: 0x17738E8, name: "../assets/audio/seq/17738E8"}  # |Strange finish
+  - {type: bin, start: 0x1773E28, name: "../assets/audio/seq/1773E28"}  # |Board Map Fan-fare
+  - {type: bin, start: 0x1774398, name: "../assets/audio/seq/1774398"}  # |Board Map Overview
+  - {type: bin, start: 0x1774748, name: "../assets/audio/seq/1774748"}  # |Selecting star person?
+  - {type: bin, start: 0x17749E8, name: "../assets/audio/seq/17749E8"}  # |Selecting some person?
+  - {type: bin, start: 0x1774D98, name: "../assets/audio/seq/1774D98"}  # |Fanfare of some sort
+  - {type: bin, start: 0x17750C0, name: "../assets/audio/seq/17750C0"}  # |Two Beeps
+  - {type: bin, start: 0x1775130, name: "../assets/audio/seq/1775130"}  # |Following star get fan-fare
+  - {type: bin, start: 0x1775648, name: "../assets/audio/seq/1775648"}  # |After the Victory
+  - {type: bin, start: 0x1776940, name: "../assets/audio/seq/1776940"}  # |Mini-Game Island
+  - {type: bin, start: 0x17774E0, name: "../assets/audio/seq/17774E0"}  # |Mini-Game Island
+  - {type: bin, start: 0x1777580, name: "../assets/audio/seq/1777580"}  # |Mini-Game Island
+  - {type: bin, start: 0x17777D0, name: "../assets/audio/seq/17777D0"}  # |Mini-Game Island
+  - {type: bin, start: 0x1777CE0, name: "../assets/audio/seq/1777CE0"}  # |Mini-Game Island
+  - {type: bin, start: 0x1777F88, name: "../assets/audio/seq/1777F88"}  # |Mini-Game Island (Bowser)
+  - {type: bin, start: 0x1778268, name: "../assets/audio/seq/1778268"}  # |Mini-Game Island
+  - {type: bin, start: 0x1778610, name: "../assets/audio/seq/1778610"}  # |Mini-Game Island (Aquatic)
+  - {type: bin, start: 0x1778838, name: "../assets/audio/seq/1778838"}  # |Two Beeps
+  - {type: bin, start: 0x17788A8, name: "../assets/audio/seq/17788A8"}  # |Two Beeps
+  - {type: bin, start: 0x1778918, name: "../assets/audio/seq/1778918"}  # |Two Beeps
+  - {type: bin, start: 0x1778988, name: "../assets/audio/seq/1778988"}  # |Two Beeps
+  - {type: bin, start: 0x17789F8, name: "../assets/audio/seq/17789F8"}  # |Two Beeps
+  - {type: bin, start: 0x1778A68, name: "../assets/audio/seq/1778A68"}  # |Two Beeps
+  - {type: bin, start: 0x1778AD8, name: "../assets/audio/seq/1778AD8"}  # |Two Beeps
+  - {type: bin, start: 0x1778B48, name: "../assets/audio/seq/1778B48"}  # |Two Beeps
+
   - {type: bin, start: 0x1778c70, name: "../assets/audio/soundbank2.bnk"} # Instrument meta files
   - {type: bin, start: 0x1782660, name: "../assets/audio/wavetable2.tbl"} # raw/vadpcm audio wave data
-  - {type: bin, start: 0x1820d60, name: "../assets/audio/sequencebnk2.tbl"} # sbk file containing seq files below
+  #- {type: bin, start: 0x1820d60, name: "../assets/audio/sequencebnk2.tbl"} # sbk file containing seq files below
+  - {type: bin, start: 0x1820D60, name: "../assets/audio/seq2/1820D60"}  # |Unkown
+  - {type: bin, start: 0x1820DD0, name: "../assets/audio/seq2/1820DD0"}  # |Unkown
+  - {type: bin, start: 0x18230D8, name: "../assets/audio/seq2/18230D8"}  # |Unkown
+  - {type: bin, start: 0x18244F0, name: "../assets/audio/seq2/18244F0"}  # |Unkown
+  - {type: bin, start: 0x18255B8, name: "../assets/audio/seq2/18255B8"}  # |Unkown
+  - {type: bin, start: 0x1825B48, name: "../assets/audio/seq2/1825B48"}  # |Unkown
+  - {type: bin, start: 0x182AEC8, name: "../assets/audio/seq2/182AEC8"}  # |Unkown
 
   - type: bin
     start: 0x1832AE0
