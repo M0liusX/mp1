@@ -260,8 +260,10 @@ INCLUDE_ASM(s32, "B980", func_800108C8);
 
 INCLUDE_ASM(s32, "B980", func_80010998);
 
+void func_80010A68(s16, s16);
 INCLUDE_ASM(s32, "B980", func_80010A68);
 
+void func_80010B38(s16, s8);
 INCLUDE_ASM(s32, "B980", func_80010B38);
 
 INCLUDE_ASM(s32, "B980", func_80010C08);
@@ -314,8 +316,6 @@ INCLUDE_ASM(s32, "B980", func_800123DC);
 
 INCLUDE_ASM(s32, "B980", func_8001249C);
 
-INCLUDE_ASM(s32, "B980", func_80012574);
-
 typedef struct {
     s32 unk0;
     s32 unk4;
@@ -333,6 +333,8 @@ typedef struct {
     s8  unk26;
     s8  unk27;
     u8  unk28;
+    s8  unk29;
+    char pad2A[2]; 
 } unk_D_800CEA94;
 
 typedef struct {
@@ -361,7 +363,53 @@ extern u8  D_800CEAB9;
 extern s8  D_800CEABA;
 extern s8  D_800CEABB;
 
-INCLUDE_ASM(s32, "B980", func_80012654);
+// INCLUDE_ASM(s32, "B980", func_80012574);
+void func_80012574(s16 arg0, s16 arg1) {
+    s16 var_s1;
+    s32 temp_v1;
+    unk_D_800CEA94* temp_s0;
+
+    temp_s0 = &D_800CEA94[arg0];
+    var_s1 = arg1;
+    if (temp_s0->unkC == 1) {
+        D_800CEAA4 |= 0x10;
+        if (arg1 >= 0x4B1) {
+            var_s1 = 0x4B0;
+        }
+        temp_v1 = temp_s0->unk8;
+        if (!(temp_v1 & 0x1000)) {
+            temp_s0->unk8 = temp_v1 | 1;
+            if (temp_s0->unk29 == 2) {
+                func_80010A68(arg0, var_s1);
+            }
+        }
+        temp_s0->unk1A = var_s1;
+        D_800CEAA4 &= ~0x10;
+    }
+}
+
+//INCLUDE_ASM(s32, "B980", func_80012654);
+void func_80012654(s16 arg0, s8 arg1) {
+    s32 temp_v1;
+    s8 temp_a1;
+    unk_D_800CEA94* temp_s0;
+
+    temp_s0 = &D_800CEA94[arg0];
+    if ((temp_s0->unkC == 1) && !(temp_s0->unk8 & 0x10)) {
+        D_800CEAA4 |= 0x10;
+        temp_a1 = arg1 & ((s32) ~arg1 >> 0x1F);
+        temp_v1 = temp_s0->unk8;
+        if (!(temp_v1 & 0x1000)) {
+            temp_s0->unk8 = temp_v1 | 8;
+            if (temp_s0->unk29 == 2) {
+                func_80010B38(arg0, temp_a1);
+            }
+        }
+        temp_s0->unk28 = (u8) temp_a1;
+        D_800CEAA4 &= ~0x10;
+    }
+}
+
 
 //INCLUDE_ASM(s32, "B980", func_80012738);
 void func_80012738(s8 arg0) {
