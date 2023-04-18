@@ -16,7 +16,28 @@ typedef struct FXD0_Unk3 {
     FXDO_Unk* unk20;
 } FXD0_Unk3;
 
-FXDO_Unk* func_8000AFA0(s32 arg0);
+typedef struct {
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+    s32 unkC;
+    s32 unk10[0x2];
+    s16 unk18;
+    s16 unk1A;
+    s32 unk1C;
+    s16 unk20;
+    s8  unk22;
+    s8  unk23;
+    s8  unk24;
+    u8  unk25;
+    s8  unk26;
+    s8  unk27;
+    u8  unk28;
+    s8  unk29;
+    char pad2A[2]; 
+} unk_D_800CEA94;
+
+void* func_8000AFA0(s32 size);
 s32 func_8000AFF8(s32, s32, s32);
 
 s32 func_8000B13C(void);

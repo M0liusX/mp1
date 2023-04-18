@@ -2,6 +2,7 @@
 
 #include "PR/os.h"
 #include "PR/libaudio.h"
+#include "PR/synthInternals.h"
 #include "B980.h"
 
 extern file_1ACF0_struct D_800C18A0;
@@ -11,7 +12,7 @@ extern s8 D_800ECB2C;
 extern void func_800130A4(Addr*);
 extern s32 D_800C1870;
 extern Addr D_800C1874;
-extern ALSeqPlayer* D_800CDAD4;
+extern ALCSPlayer* D_800CDAD4;
 extern s32 D_800CDAEC;
 extern ALSndPlayer* D_800CEA8C;
 extern s32 D_800CEAA0;
@@ -24,6 +25,9 @@ extern ALHeap D_800CDAA8;
 extern FXD0_Unk3 D_800C1898;
 extern FXDO_Unk  D_800C18B4;
 extern FXDO_Unk* D_800C18B8;
+
+extern unk_D_800CEA94 *D_800CEA94;
+extern s32 D_800CEA9C;
 
 extern void func_80061FA0(OSIoMesg*, s32, s32, s32, FXDO_Unk*, s32, OSMesgQueue*); /* TODO: find header */
 void func_8000AD80(s32 arg0, FXDO_Unk* arg1, s32 arg2) {
@@ -96,9 +100,9 @@ s32 func_8000AE50(void) {
     return 0x64;
 }
 
-/* Alloc FXDO Heap. */
-FXDO_Unk* func_8000AFA0(s32 arg0) {
-    FXDO_Unk* temp_v0 = (FXDO_Unk*) alHeapDBAlloc(0, 0, &D_800CDAA8, 1, arg0);
+/* Alloc from Heap. */
+void* func_8000AFA0(s32 size) {
+    void* temp_v0 = alHeapDBAlloc(0, 0, &D_800CDAA8, 1, size);
 
     if (temp_v0 == NULL) {
         func_8000AFF8(0, 0, 1);
@@ -106,7 +110,7 @@ FXDO_Unk* func_8000AFA0(s32 arg0) {
     return temp_v0;
 }
 
-/* FxDO Heap Allocation Failed Error. */
+/* [DEBUG] Heap Allocation Failed Error. */
 s32 func_8000AFF8(s32 arg0, s32 arg1, s32 arg2) {
     return 0;
 }
@@ -177,7 +181,7 @@ s32 func_8000B198(void) {
     if (D_800CDAEC == 0) {
         if (D_800CEAA0 == 0) {
             if (D_800C1870 & 0x8000) {
-                alSeqpDelete(D_800CDAD4);
+                alSeqpDelete((ALSeqPlayer*) D_800CDAD4); // This is compatible.
                 alSndpDelete(D_800CEA8C);
                 func_800130A4(&D_800C1874);
                 D_800C1870 = 0;
@@ -191,40 +195,36 @@ s32 func_8000B198(void) {
     return 1;
 }
 
-INCLUDE_ASM(s32, "B980", func_8000B210);
-// typedef struct {
-//     s32 unk0;
-//     s32 unk4;
-//     s32 unk8;
-//     s32 unkC;
-// } unk_D_800CDAB8;
-// extern s32 func_8000B3E8();                                /* extern */
-// extern s32 func_8000D65C();                                /* extern */
-// extern s32 func_80012CF0(u8*, ALHeap*);                    /* extern */
-// extern void func_80013010(u8*);                            /* extern */
-// extern unk_D_800CDAB8 D_800CDAB8;
-// s32 func_8000B210(void) {
-//     s32 var_v0;
+typedef struct {
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+    s32 unkC;
+} unk_D_800CDAB8;
+extern s32 func_8000B3E8();                                /* extern */
+extern s32 func_8000D65C();                                /* extern */
+extern s32 func_80012CF0(u8*, ALHeap*);                    /* extern */
+extern void func_80013010(u8*);                            /* extern */
+extern unk_D_800CDAB8 D_800CDAB8;
+s32 func_8000B210(void) {
+    s32 var_v0;
 
-//     alHeapInit(&D_800CDAA8, *D_800C18A0.unk_00, (s32) D_800C18A0.unk_04);
-//     D_800CDAB8.unkC = 0;
-//     D_800CDAB8.unk8 = 0;
-//     D_800CDAB8.unk4 = 0;
-//     D_800CDAB8.unk0 = 0;
+    alHeapInit(&D_800CDAA8, *D_800C18A0.unk_00, (s32) D_800C18A0.unk_04);
+    D_800CDAB8.unk0 = D_800CDAB8.unk4 = D_800CDAB8.unk8 = D_800CDAB8.unkC = 0;
 
-//     var_v0 = func_8000AE50();
-//     if (var_v0 != 0) { return var_v0; }
-//     var_v0 = func_80012CF0(D_800C1874, &D_800CDAA8);
-//     if (var_v0 != 0) { return var_v0; }
-//     var_v0 = func_8000B3E8();
-//     if (var_v0 != 0) { return var_v0; }
-//     var_v0 = func_8000D65C();
-//     if (var_v0 != 0) { return var_v0; }
+    var_v0 = func_8000AE50();
+    if (var_v0) { return var_v0; }
+    var_v0 = func_80012CF0(D_800C1874, &D_800CDAA8);
+    if (var_v0) { return var_v0; }
+    var_v0 = func_8000B3E8();
+    if (var_v0) { return var_v0; }
+    var_v0 = func_8000D65C();
+    if (var_v0) { return var_v0; }
 
-//     func_80013010(D_800C1874);
-//     D_800C1870 = 0x8000;
-//     return 0;
-// }
+    func_80013010(D_800C1874);
+    D_800C1870 = 0x8000;
+    return 0;
+}
 
 Addr* func_8000B2BC(void) {
     return &D_800C1874;
@@ -246,22 +246,50 @@ s32 func_8000B2FC(void) {
     return D_800CDAA8.len - (D_800CDAA8.cur - D_800CDAA8.base);
 }
 
-INCLUDE_ASM(s32, "B980", func_8000B31C);
+/* Getters / Setters */
+s32 func_8000B31C() {
+    return D_800CDAB8.unk0;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000B328);
+void func_8000B328() {
+    D_800CDAB8.unk0 = 0;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000B334);
+s32 func_8000B334() {
+    return D_800CDAB8.unk4;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000B340);
+s32 func_8000B340() {
+    return D_800CDAB8.unk8;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000B34C);
+s32 func_8000B34C() {
+    return D_800CDAB8.unkC;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000B358);
+s32 func_8000B358() {
+    return D_800CDACC;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000B364);
+void func_8000B364(s32 arg0) {
+    s32 i;
+    unk_D_800CEA94* temp_v1;
 
-INCLUDE_ASM(s32, "B980", func_8000B3E0);
+    D_800ECB2C = arg0 & 1;
+    for (i = 0; i < D_800CEA9C; i++) {
+        temp_v1 = &D_800CEA94[i];
+        if (temp_v1->unkC == 1) {
+            temp_v1->unk8 =  temp_v1->unk8 | 4;
+        }
+    }
+}
 
+/* [DEBUG] */
+s32 func_8000B3E0() {
+    return 0;
+}
+
+/* Load Song file and bank */
 INCLUDE_ASM(s32, "B980", func_8000B3E8);
 
 INCLUDE_ASM(s32, "B980", func_8000B7EC);
@@ -436,36 +464,13 @@ INCLUDE_ASM(s32, "B980", func_800123DC);
 INCLUDE_ASM(s32, "B980", func_8001249C);
 
 typedef struct {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-    s32 unkC;
-    s32 unk10[0x2];
-    s16 unk18;
-    s16 unk1A;
-    s32 unk1C;
-    s16 unk20;
-    s8  unk22;
-    s8  unk23;
-    s8  unk24;
-    u8  unk25;
-    s8  unk26;
-    s8  unk27;
-    u8  unk28;
-    s8  unk29;
-    char pad2A[2]; 
-} unk_D_800CEA94;
-
-typedef struct {
     s16 unk0;
     s8  unk2[0x16];
     u8  unk18;
 } unk_func_80012C7C;
 
 extern s16* D_800CEA90;
-extern unk_D_800CEA94 *D_800CEA94;
 
-extern s32 D_800CEA9C;
 extern s32 D_800CEAA4;
 extern s32 D_800CEAA8;
 extern f32 D_800CEAE8;
@@ -507,7 +512,6 @@ void func_80012574(s16 arg0, s16 arg1) {
     }
 }
 
-//INCLUDE_ASM(s32, "B980", func_80012654);
 void func_80012654(s16 arg0, s8 arg1) {
     s32 temp_v1;
     s8 temp_a1;
@@ -530,7 +534,6 @@ void func_80012654(s16 arg0, s8 arg1) {
 }
 
 
-//INCLUDE_ASM(s32, "B980", func_80012738);
 void func_80012738(s8 arg0) {
     s16 temp_v0;
 
@@ -543,7 +546,6 @@ void func_80012738(s8 arg0) {
     D_800CEAA4 &= ~0x10;
 }
 
-//INCLUDE_ASM(s32, "B980", func_800127A0);
 void func_800127A0(s8 arg0) {
     s32 i;
     unk_D_800CEA94* temp_a1;
@@ -564,7 +566,6 @@ void func_800127A0(s8 arg0) {
     D_800CEAA4 &= ~0x10;
 }
 
-//INCLUDE_ASM(s32, "B980", func_8001286C);
 void func_8001286C(u8 arg0) {
     s32 i;
     unk_D_800CEA94* temp_a1;
@@ -585,7 +586,6 @@ void func_8001286C(u8 arg0) {
     D_800CEAA4 &= ~0x10;
 }
 
-//INCLUDE_ASM(s32, "B980", func_8001293C);
 void func_8001293C(s16 arg0) {
     s32 i;
     unk_D_800CEA94* temp_a1;
@@ -606,7 +606,6 @@ void func_8001293C(s16 arg0) {
     D_800CEAA4 &= ~0x10;
 }
 
-//INCLUDE_ASM(s32, "B980", func_80012A18);
 void func_80012A18(s8 arg0) {
     s32 i;
     unk_D_800CEA94* temp_a1;
@@ -629,27 +628,22 @@ void func_80012A18(s8 arg0) {
     D_800CEAA4 &= ~0x10;
 }
 
-//INCLUDE_ASM(s32, "B980", func_80012AF8);
 s8 func_80012AF8() {
     return D_800CEAB8;
 }
 
-// INCLUDE_ASM(s32, "B980", func_80012B04);
 u8 func_80012B04() {
     return D_800CEAB9;
 }
 
-// INCLUDE_ASM(s32, "B980", func_80012B10);
 s16 func_80012B10() {
     return D_800CEAB4;
 }
 
-//INCLUDE_ASM(s32, "B980", func_80012B1C);
 s8 func_80012B1C() {
     return D_800CEABA;
 }
 
-//INCLUDE_ASM(s32, "B980", func_80012B28);
 void func_80012B28(s8 arg0, s8 arg1, s8 arg2, s8 arg3) {
     if ((D_800CEAA4 & 0x8000) && (*D_800CEA90 == 0x5433)) {
         D_800CEAF0 = D_800CEA9C;
@@ -664,12 +658,10 @@ void func_80012B28(s8 arg0, s8 arg1, s8 arg2, s8 arg3) {
     }
 }
 
-//INCLUDE_ASM(s32, "B980", func_80012C70);
 void func_80012C70(s8 arg0) {
     D_800CEABB = arg0;
 }
 
-//INCLUDE_ASM(s32, "B980", func_80012C7C);
 u32 func_80012C7C(s16 arg0) {
     unk_func_80012C7C sp10;
 
