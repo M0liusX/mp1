@@ -1,61 +1,112 @@
 #include "common.h"
 
-s32 func_8000B13C(void);
+#include "PR/os.h"
+#include "PR/libaudio.h"
+#include "B980.h"
+
 extern file_1ACF0_struct D_800C18A0;
-s32 func_8000B210(void);
-void osCreateMesgQueue(void*, void*, s32);
-extern s32 D_800CD9C8;
-extern s32 D_800CDA90;
+extern OSMesg D_800CD9C8;
+extern OSMesgQueue D_800CDA90;
 extern s8 D_800ECB2C;
-void func_800130A4(Addr*);
-void alSeqpDelete(s32);
-void alSndpDelete(s32);
+extern void func_800130A4(Addr*);
 extern s32 D_800C1870;
 extern Addr D_800C1874;
-extern s32 D_800CDAD4;
+extern ALSeqPlayer* D_800CDAD4;
 extern s32 D_800CDAEC;
-extern s32 D_800CEA8C;
+extern ALSndPlayer* D_800CEA8C;
 extern s32 D_800CEAA0;
 extern s32 D_800CDACC;
-
-
-//FXDO related
-typedef struct FXDO_Unk {
-/* 0x00 */ char unk_00[4];
-/* 0x04 */ s32 unk_04;
-} FXDO_Unk; //unk size
 
 extern FXDO_Unk* D_800CDAC8;
 extern s32 D_800C1870;
 
-typedef struct FXD0_Unk2 {
-    void* FXD0_header;
-    void* unk_04;
-    s32 unk_08;
-} FXD0_Unk2;
+extern ALHeap D_800CDAA8;
+extern FXD0_Unk3 D_800C1898;
+extern FXDO_Unk  D_800C18B4;
+extern FXDO_Unk* D_800C18B8;
 
-extern FXD0_Unk2 D_800CDAA8;
-s32 func_8000AFF8(s32, s32, s32);
-s32 alHeapDBAlloc(s32, s32, FXD0_Unk2*, s32, s32);
+extern void func_80061FA0(OSIoMesg*, s32, s32, s32, FXDO_Unk*, s32, OSMesgQueue*); /* TODO: find header */
+void func_8000AD80(s32 arg0, FXDO_Unk* arg1, s32 arg2) {
+    OSIoMesg sp20;
 
-INCLUDE_ASM(s32, "B980", func_8000AD80);
+    osInvalDCache(arg1, arg2);
+    func_80061FA0(&sp20, 0, 0, arg0, arg1, arg2, &D_800CDA90);
+    osRecvMesg(&D_800CDA90, NULL, 1);
+}
 
-s16 func_8000ADFC(s8);
-INCLUDE_ASM(s32, "B980", func_8000ADFC);
+s32 func_8000ADFC(s8 arg0) {
+    if (arg0 <= 0) {
+        return 0;
+    }
+    return (arg0 << 0x8) | 0xFF;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000AE20);
+void func_8000AE20(s16* arg0, s16 arg1) {
+    if (*arg0 < 0) {
+        *arg0 = 0;
+        return;
+    }
+    if (*arg0 > arg1) {
+        *arg0 = arg1;
+    }
+}
 
-INCLUDE_ASM(s32, "B980", func_8000AE50);
+s32 func_8000AE50(void) {
+    s32 temp_s1;
 
-s32 func_8000AFA0(s32 arg0) {
-    s32 temp_v0 = alHeapDBAlloc(0, 0, &D_800CDAA8, 1, arg0);
+    D_800CDAC8 = func_8000AFA0(8);
+    if (D_800CDAC8 == NULL) {
+        return 1;
+    }
+    D_800CDAC8->unk_04 = 0;
+    if (D_800C1898.unk00 != 0) {
+        func_8000AD80(D_800C1898.unk00, D_800CDAC8, 8);
+        if (D_800CDAC8->unk_00.sint != 0x46584430) {
+            D_800CDAC8->unk_04 = 0;
+        }
+    }
 
-    if (temp_v0 == 0) {
+    if (D_800C18B4.unk_00.sint >= 0x14) {
+        temp_s1 =  D_800C18B4.unk_00.sint - 0x14;
+        if (temp_s1 < D_800CDAC8->unk_04) {
+            temp_s1 = D_800C1898.unk00 + (temp_s1 * 0x208) + 0x10;
+            D_800C1898.unk20 = func_8000AFA0(0x208);
+            if (D_800C1898.unk20 == NULL) {
+                return 1;
+            }
+            func_8000AD80(temp_s1, D_800C18B8, 0x208);
+            return 0;
+        }
+        func_8000AFF8(0, 0, 0x20);
+        return 0x64;
+    }
+
+    if (D_800C18B4.unk_00.sint < 6) {
+        D_800C18B4.unk_04 = 0;
+        return 0;
+    }
+
+    if (D_800C18B4.unk_00.sint == 6) {
+        if (D_800C18B4.unk_04 != 0) {
+            return 0;
+        }
+    } 
+    
+    func_8000AFF8(0, 0, 0x20);
+    return 0x64;
+}
+
+/* Alloc FXDO Heap. */
+FXDO_Unk* func_8000AFA0(s32 arg0) {
+    FXDO_Unk* temp_v0 = (FXDO_Unk*) alHeapDBAlloc(0, 0, &D_800CDAA8, 1, arg0);
+
+    if (temp_v0 == NULL) {
         func_8000AFF8(0, 0, 1);
     }
     return temp_v0;
 }
 
+/* FxDO Heap Allocation Failed Error. */
 s32 func_8000AFF8(s32 arg0, s32 arg1, s32 arg2) {
     return 0;
 }
@@ -73,9 +124,42 @@ s32 func_8000B00C(s32 arg0, s32 arg1, Addr* arg2, Addr* arg3) {
     return func_8000B13C();
 }
 
-INCLUDE_ASM(s32, "B980", func_8000B044);
+/* Unused Function */
+extern unusedX40 D_800C18A8;
+void func_8000B044(unusedX40_2* arg0) {
+   D_800C18A8.unk04 = arg0->unk04;
+   D_800C18A8.unk08 = arg0->unk08;
+   D_800C18A8.unk0C = arg0->unk10;
+   D_800C18A8.unk10 = arg0->unk14;
+   D_800C18A8.unk2C = arg0->unk18;
+   D_800C18A8.unk30 = arg0->unk1C;
+   D_800C18A8.unk34 = arg0->unk20;
+   D_800C18A8.unk38 = arg0->unk24;
+   D_800C18A8.unk3C = arg0->unk28;
+   D_800C18A8.unk18 = arg0->unk2C;
+   D_800C18A8.unk1C = arg0->unk30;
+   D_800C18A8.unk24 = arg0->unk34;
+   D_800C18A8.unk14 = arg0->unk38;
+   D_800C18A8.unk00 = arg0->unk0C;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000B0C0);
+/* Unused Function (Inverse of top) */
+void func_8000B0C0(unusedX40_2* arg0) {
+   arg0->unk04 = D_800C18A8.unk04;
+   arg0->unk08 = D_800C18A8.unk08;
+   arg0->unk10 = D_800C18A8.unk0C;
+   arg0->unk14 = D_800C18A8.unk10;
+   arg0->unk18 = D_800C18A8.unk2C;
+   arg0->unk1C = D_800C18A8.unk30;
+   arg0->unk20 = D_800C18A8.unk34;
+   arg0->unk24 = D_800C18A8.unk38;
+   arg0->unk28 = D_800C18A8.unk3C;
+   arg0->unk2C = D_800C18A8.unk18;
+   arg0->unk30 = D_800C18A8.unk1C;
+   arg0->unk34 = D_800C18A8.unk24;
+   arg0->unk38 = D_800C18A8.unk14;
+   arg0->unk0C = D_800C18A8.unk00;
+}
 
 s32 func_8000B13C(void) {
     osCreateMesgQueue(&D_800CDA90, &D_800CD9C8, 50);
@@ -88,6 +172,7 @@ s32 func_8000B13C(void) {
     return 1;
 }
 
+/* Conditional delete seq and snd players. */
 s32 func_8000B198(void) {
     if (D_800CDAEC == 0) {
         if (D_800CEAA0 == 0) {
@@ -107,6 +192,39 @@ s32 func_8000B198(void) {
 }
 
 INCLUDE_ASM(s32, "B980", func_8000B210);
+// typedef struct {
+//     s32 unk0;
+//     s32 unk4;
+//     s32 unk8;
+//     s32 unkC;
+// } unk_D_800CDAB8;
+// extern s32 func_8000B3E8();                                /* extern */
+// extern s32 func_8000D65C();                                /* extern */
+// extern s32 func_80012CF0(u8*, ALHeap*);                    /* extern */
+// extern void func_80013010(u8*);                            /* extern */
+// extern unk_D_800CDAB8 D_800CDAB8;
+// s32 func_8000B210(void) {
+//     s32 var_v0;
+
+//     alHeapInit(&D_800CDAA8, *D_800C18A0.unk_00, (s32) D_800C18A0.unk_04);
+//     D_800CDAB8.unkC = 0;
+//     D_800CDAB8.unk8 = 0;
+//     D_800CDAB8.unk4 = 0;
+//     D_800CDAB8.unk0 = 0;
+
+//     var_v0 = func_8000AE50();
+//     if (var_v0 != 0) { return var_v0; }
+//     var_v0 = func_80012CF0(D_800C1874, &D_800CDAA8);
+//     if (var_v0 != 0) { return var_v0; }
+//     var_v0 = func_8000B3E8();
+//     if (var_v0 != 0) { return var_v0; }
+//     var_v0 = func_8000D65C();
+//     if (var_v0 != 0) { return var_v0; }
+
+//     func_80013010(D_800C1874);
+//     D_800C1870 = 0x8000;
+//     return 0;
+// }
 
 Addr* func_8000B2BC(void) {
     return &D_800C1874;
@@ -123,8 +241,9 @@ s32 func_8000B2F0(void) {
     return 0x610032;
 }
 
+/* Get remaining heap size. */
 s32 func_8000B2FC(void) {
-    return D_800CDAA8.unk_08 - (D_800CDAA8.unk_04 - D_800CDAA8.FXD0_header);
+    return D_800CDAA8.len - (D_800CDAA8.cur - D_800CDAA8.base);
 }
 
 INCLUDE_ASM(s32, "B980", func_8000B31C);

@@ -104,7 +104,15 @@ INCLUDE_ASM(s32, "62140", func_80061F24);
 
 INCLUDE_ASM(s32, "62140", func_80061F60);
 
-INCLUDE_ASM(s32, "62140", func_80061FA0);
+extern OSPiHandle* D_800EE31C;
+void func_80061FA0(OSIoMesg* arg0, u8 arg1, s32 arg2, u32 arg3, void* arg4, u32 arg5, OSMesgQueue* arg6) {
+    arg0->hdr.pri = arg1;
+    arg0->hdr.retQueue = arg6;
+    arg0->dramAddr = arg4;
+    arg0->devAddr = arg3;
+    arg0->size = arg5;
+    osEPiStartDma(D_800EE31C, arg0, arg2);
+}
 
 INCLUDE_ASM(s32, "62140", func_80061FE8);
 
