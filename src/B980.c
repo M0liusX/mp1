@@ -37,11 +37,12 @@ void func_8000AD80(s32 arg0, void* arg1, s32 arg2) {
     osRecvMesg(&D_800CDA90, NULL, 1);
 }
 
-s32 func_8000ADFC(s8 arg0) {
-    if (arg0 <= 0) {
+/* Convert signed 8-bit volume to positive only signed 16-bit volume. */
+s16 func_8000ADFC(s8 volume) {
+    if (volume <= 0) {
         return 0;
     }
-    return (arg0 << 0x8) | 0xFF;
+    return (volume << 0x8) | 0xFF;
 }
 
 void func_8000AE20(s16* arg0, s16 arg1) {
@@ -310,32 +311,120 @@ s32 func_8000B7EC(s32 fileAddr) {
 /* Set player, song, bank, volume, and play song. */
 INCLUDE_ASM(s32, "B980", func_8000B844);
 
-
+/* Manage song state */
 INCLUDE_ASM(s32, "B980", func_8000BB30);
 
-INCLUDE_ASM(s32, "B980", func_8000BE6C);
+/* Kill Sequence Player.*/
+void func_8000BE6C(void) {
+    alSeqpStop((ALSeqPlayer*) D_800CDAD4);   // Compatible
+    alSeqpDelete((ALSeqPlayer*) D_800CDAD4); // Compatible
+}
 
-INCLUDE_ASM(s32, "B980", func_8000BE98);
+// INCLUDE_ASM(s32, "B980", func_8000BE98);
 
-INCLUDE_ASM(s32, "B980", func_8000BEBC);
+/* Load 5 Words */
+void func_8000BE98(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+    ((s32*)D_800C1874)[0] = arg0;
+    ((s32*)D_800C1874)[1] = arg1;
+    ((s32*)D_800C1874)[2] = arg2;
+    ((s32*)D_800C1874)[3] = arg3;
+    ((s32*)D_800C1874)[4] = arg4;
+}
 
+/* func_8000BEEC wrapper */
+s16 func_8000BEBC(s16 arg0) {
+    return func_8000BEEC(arg0, 0, 0);
+}
+
+/* Check for stop? */
 INCLUDE_ASM(s32, "B980", func_8000BEEC);
 
-INCLUDE_ASM(s32, "B980", func_8000C144);
+/* Get flag? */
+extern s32 D_800CDAF0;
+s32 func_8000C144(void) {
+    if (D_800CDAF0 & 2) {
+        return 0x100;
+    }
+    if (D_800CDAF0 & 1) {
+        return 0x200;
+    }
+    return D_800CDAEC;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000C184);
+/* Conditional get seqCount */
+extern s32 D_800CDAF0; // sequence state?
+s16 func_8000C184(void) {
+    if (D_800CDAF0 & 0x8000) {
+        return D_800CDAE0->seqCount;
+    }
+    return 0;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000C1AC);
+/* Getter */
+extern s16 D_800CDAFC;
+s16 func_8000C1AC(void) {
+    return D_800CDAFC;
+}
 
+/* Another seq stop conditional */
 INCLUDE_ASM(s32, "B980", func_8000C1B8);
 
-INCLUDE_ASM(s32, "B980", func_8000C250);
+extern f32 D_800CDAF4;
+extern f32 D_800CDAF8;
+extern s16 D_800CDAFE;
+extern s16 D_800CDB00; // positive signed 16-bit volume
+extern s16 D_800CDB02; // volume scale
+void func_8000C250(s16 arg0) {
+    if ((D_800CDAEC == 1) && !(D_800CDAF0 & 2)) {
+        if (arg0 < 0) {
+            arg0 = 1;
+        }
+        D_800CDAF8 = 0;
+        D_800CDAFE = D_800CDB02;
+        D_800CDAF4 = (f32) (s16) D_800CDB02 / (f32) (s16) arg0;
+    }
+}
 
-INCLUDE_ASM(s32, "B980", func_8000C2D4);
+s16 func_8000C2D4(void) {
+    f32 var_f;
+    s16 out;
 
-INCLUDE_ASM(s32, "B980", func_8000C390);
+    if ((D_800CDAEC != 1)) {
+        return 0;
+    }
+    if (D_800CDAF4 == 0.0f) {
+        return 0;
+    }
+    
+    if (D_800CDAF4 < 0.0f) {
+        var_f = -D_800CDAF4;
+    } else {
+        var_f = D_800CDAF4;
+    }
+    
+    out = (s16) ( (D_800CDB02 / var_f) - (D_800CDAF8 / var_f));
+    if (D_800CDAF4 < 0.0f) {
+        out = -out;
+    }
+    return out;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000C414);
+/* Fancy volume wrapper */
+void func_8000C390(s8 volume) {
+    if (D_800CDAF0 & 0x8000) {
+        D_800CDB00 = func_8000ADFC(volume);
+        alSeqpSetVol((ALSeqPlayer*) D_800CDAD4, (D_800CDB02 * D_800CDB00) / 0x7FFF);
+    }
+}
+
+/* Fancy volume wrapper 2 */
+void func_8000C414(s8 volume) {
+    if (D_800CDAF0 & 0x8000) {
+        D_800CDAF4 = 0;
+        D_800CDB02 = func_8000ADFC(volume);
+        alSeqpSetVol((ALSeqPlayer*) D_800CDAD4, (D_800CDB02 * D_800CDB00) / 0x7FFF);
+    }
+}
 
 INCLUDE_ASM(s32, "B980", func_8000C4A0);
 
@@ -502,7 +591,6 @@ extern u8  D_800CEAB9;
 extern s8  D_800CEABA;
 extern s8  D_800CEABB;
 
-// INCLUDE_ASM(s32, "B980", func_80012574);
 void func_80012574(s16 arg0, s16 arg1) {
     s16 var_s1;
     s32 temp_v1;

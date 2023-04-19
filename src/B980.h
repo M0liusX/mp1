@@ -37,12 +37,20 @@ typedef struct {
     char pad2A[2]; 
 } unk_D_800CEA94;
 
+typedef struct {
+    s32 unk00;
+    s32 unk04;
+    s32 unk08;
+    s32 unk0C;
+    s32 unk10;
+} Unk_5Words;
+
 void* func_8000AFA0(s32 size);
 s32 func_8000AFF8(s32, s32, s32);
 
 s32 func_8000B13C(void);
 s32 func_8000B210(void);
-
+s16 func_8000BEEC(s16, s32, s32);
 
 /* Unused */
 typedef struct unusedX40 {
