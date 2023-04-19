@@ -2,7 +2,6 @@
 
 #include "PR/os.h"
 #include "PR/libaudio.h"
-#include "PR/synthInternals.h"
 #include "B980.h"
 
 extern file_1ACF0_struct D_800C18A0;
@@ -30,7 +29,7 @@ extern unk_D_800CEA94 *D_800CEA94;
 extern s32 D_800CEA9C;
 
 extern void func_80061FA0(OSIoMesg*, s32, s32, s32, FXDO_Unk*, s32, OSMesgQueue*); /* TODO: find header */
-void func_8000AD80(s32 arg0, FXDO_Unk* arg1, s32 arg2) {
+void func_8000AD80(s32 arg0, void* arg1, s32 arg2) {
     OSIoMesg sp20;
 
     osInvalDCache(arg1, arg2);
@@ -289,12 +288,28 @@ s32 func_8000B3E0() {
     return 0;
 }
 
+
+
+extern ALSeqFile* D_800CDAE0;
+
 /* Load Song file and bank */
+/* decomp.me: https://decomp.me/scratch/VLk6f ~80% */
 INCLUDE_ASM(s32, "B980", func_8000B3E8);
 
-INCLUDE_ASM(s32, "B980", func_8000B7EC);
+/* 2-Byte Align And Reserve Heap */
+s32 func_8000B7EC(s32 fileAddr) {
+    fileAddr = (fileAddr & 1) + fileAddr; // Align
+    D_800CDAE0 = func_8000AFA0(fileAddr);
+    if (D_800CDAE0 == NULL) {
+        return 1;
+    }
+    func_8000AD80(*(s32*)D_800C1874, D_800CDAE0, fileAddr);
+    return 0;
+}
 
+/* Set player, song, bank, volume, and play song. */
 INCLUDE_ASM(s32, "B980", func_8000B844);
+
 
 INCLUDE_ASM(s32, "B980", func_8000BB30);
 
