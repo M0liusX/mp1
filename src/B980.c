@@ -58,7 +58,7 @@ void func_8000AE20(s16* arg0, s16 arg1) {
 s32 func_8000AE50(void) {
     s32 temp_s1;
 
-    D_800CDAC8 = func_8000AFA0(8);
+    D_800CDAC8 = func_8000AFA0(sizeof(FXDO_Unk));
     if (D_800CDAC8 == NULL) {
         return 1;
     }
@@ -298,13 +298,13 @@ extern ALSeqFile* D_800CDAE0;
 INCLUDE_ASM(s32, "B980", func_8000B3E8);
 
 /* 2-Byte Align And Reserve Heap */
-s32 func_8000B7EC(s32 fileAddr) {
-    fileAddr = (fileAddr & 1) + fileAddr; // Align
-    D_800CDAE0 = func_8000AFA0(fileAddr);
+s32 func_8000B7EC(s32 size) {
+    size = (size & 1) + size; // Align
+    D_800CDAE0 = func_8000AFA0(size);
     if (D_800CDAE0 == NULL) {
         return 1;
     }
-    func_8000AD80(*(s32*)D_800C1874, D_800CDAE0, fileAddr);
+    func_8000AD80(*(s32*)D_800C1874, D_800CDAE0, size);
     return 0;
 }
 
@@ -319,8 +319,6 @@ void func_8000BE6C(void) {
     alSeqpStop((ALSeqPlayer*) D_800CDAD4);   // Compatible
     alSeqpDelete((ALSeqPlayer*) D_800CDAD4); // Compatible
 }
-
-// INCLUDE_ASM(s32, "B980", func_8000BE98);
 
 /* Load 5 Words */
 void func_8000BE98(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
@@ -426,31 +424,147 @@ void func_8000C414(s8 volume) {
     }
 }
 
-INCLUDE_ASM(s32, "B980", func_8000C4A0);
+s8 func_8000C4A0(void) {
+    return D_800CDB00 / 256;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000C4BC);
+void func_8000C4BC(s16 arg0) {
+    if (D_800CDAF0 & 0x8000) {
+        arg0 = MAX(1, arg0);
+        alSeqpSetTempo((ALSeqPlayer*) D_800CDAD4,(60.0f / arg0) * 1000.0f * 1000.0f);
+    }
+}
 
-INCLUDE_ASM(s32, "B980", func_8000C544);
+/* Get quarter-notes per minute (or BPM) */
+s16 func_8000C544(void) {
+    s32 tempo;
+    if (D_800CDAF0 & 0x8000) {
+        tempo = alCSPGetTempo((ALCSPlayer* ) D_800CDAD4);
+        if (tempo != 0) {
+            return (60.0f / (tempo / 1000000.0f));
+        }
+    }
+    return 0;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000C5C4);
+/* Attempt player stop */
+void func_8000C5C4(void) {
+    D_800CDAF0 = (D_800CDAF0 | 0x10) & ~4;
+    if (!(D_800CDAF0 & 2)) {
+        if (func_8000C144() == 1) {
+            alSeqpStop((ALSeqPlayer*) D_800CDAD4);
+        }
+        D_800CDAF0 |= 2;
+    }
+    D_800CDAF0 &= ~0x10;
+}
 
 INCLUDE_ASM(s32, "B980", func_8000C64C);
+// void func_8000C64C(s16 arg0) {
+//     s32 var_v0;
+//     s32 var_v1;
 
-INCLUDE_ASM(s32, "B980", func_8000C748);
+//     if (D_800CDAF0 & 2) {
+//         D_800CDAF0 = var_v1 = (D_800CDAF0 | 0x10) & ~2;
+//         var_v0 = ~0x10;
+//         if (!(D_800CDAF0 & 1)) {
+//             if ((arg0 != 0) && (D_800CDAF4 <= 0.0f)) {
+//                 D_800CDAF8 = 0.0f;
+//                 D_800CDAFE = 0;
+//                 alSeqpSetVol(D_800CDAD4, 0);
+//                 D_800CDAF4 = -((f32) D_800CDB02 / (f32) arg0);
+//             }
+//             D_800CDAF0 = var_v0 = D_800CDAF0 | 4;
+//             D_800CDAEC = 1;
+//             var_v1 = ~0x10;
+//         }
+//         D_800CDAF0 = var_v0 & var_v1;
+//     }
+// }
 
+typedef struct {
+/* 0x00 */ s32 program;
+/* 0x04 */  u8 volume;
+/* 0x05 */  u8 pan;
+/* 0x06 */  u8 mix;
+} SeqChannel; /* sizeof 0x08 */
+
+/* Get Channel */ 
+void func_8000C748(s32 chnid, SeqChannel* channel) {
+    if (D_800CDAF0 & 0x8000) {
+        D_800CDAF0 |= 0x10;
+        if (D_800CDAEC == 1) {
+            if (((!D_800CDAF0) && (!D_800CDAF0)) && (!D_800CDAF0)) {} // matching nonesense
+            channel->program = alSeqpGetChlProgram((ALSeqPlayer*)D_800CDAD4, chnid & 0xFF);
+            channel->volume  = alSeqpGetChlVol((ALSeqPlayer*)D_800CDAD4, chnid & 0xFF);
+            channel->pan     = alSeqpGetChlPan((ALSeqPlayer*)D_800CDAD4, chnid & 0xFF);
+            channel->mix     = alSeqpGetChlFXMix((ALSeqPlayer*)D_800CDAD4, chnid & 0xFF);
+            D_800CDAF0 &= ~0x10;
+        }
+    }
+}
+
+/* Cents to ratio shenanigans. */
 INCLUDE_ASM(s32, "B980", func_8000C808);
 
+/* Cents to ratio shenanigans pt. 2 with trig. */
 INCLUDE_ASM(s32, "B980", func_8000CCC0);
 
-INCLUDE_ASM(s32, "B980", func_8000D600);
+typedef struct Node {
+    struct Node* next;
+} Node;
+extern Node* D_800CDB04;
 
+void func_8000D600(Node* arg0) {
+    arg0->next = D_800CDB04;
+    D_800CDB04 = arg0;
+}
+
+/* simple floats floats floats */
 INCLUDE_ASM(s32, "B980", func_8000D618);
 
+/* ughhhh */
 INCLUDE_ASM(s32, "B980", func_8000D65C);
 
-INCLUDE_ASM(s32, "B980", func_8000DA04);
+extern s32 D_800C1888;
+extern s16* D_800CEA90;
+s32 func_8000DA04(s32 arg0) {
+    arg0 += (arg0 & 1);
+    D_800CEA90 = (void*) func_8000AFA0(arg0);
+    if (D_800CEA90 == NULL) {
+        return 1; 
+    }
+    if (D_800CEA90 != NULL) {
+        if (D_800C1888 == 0) {
+            *D_800CEA90 = 0;
+        } else {
+            func_8000AD80(D_800C1888, (FXDO_Unk* ) D_800CEA90, arg0);
+        }
+    }
+    return 0;
+}
 
-INCLUDE_ASM(s32, "B980", func_8000DA7C);
+/* Load Bank File. */
+extern unk_D_800CDAB8 D_800C188C;
+extern ALBankFile* D_800CEA88;
+s32 func_8000DA7C(void) {
+    s32 size;
+
+    size = D_800C188C.unk4 - D_800C188C.unk0;
+    if (size != 0) {
+        size = size + (size & 1); /* unneccessray align */
+        D_800CEA88 = (ALBankFile*) func_8000AFA0(size);
+        if (D_800CEA88 == NULL) {
+            return 2;
+        }
+        func_8000AD80(D_800C188C.unk0, D_800CEA88, size);
+        if (D_800CEA88->revision == 'B1') {
+            alBnkfNew((ALBankFile* ) D_800CEA88, (u8*) D_800C188C.unk8);
+            return 0;
+        }
+    }
+    return 1;
+}
 
 INCLUDE_ASM(s32, "B980", func_8000DB24);
 
@@ -572,8 +686,6 @@ typedef struct {
     s8  unk2[0x16];
     u8  unk18;
 } unk_func_80012C7C;
-
-extern s16* D_800CEA90;
 
 extern s32 D_800CEAA4;
 extern s32 D_800CEAA8;
