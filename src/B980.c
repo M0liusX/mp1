@@ -566,6 +566,7 @@ s32 func_8000DA7C(void) {
     return 1;
 }
 
+// https://decomp.me/scratch/yQKpx
 INCLUDE_ASM(s32, "B980", func_8000DB24);
 
 INCLUDE_ASM(s32, "B980", func_8000DC44);
